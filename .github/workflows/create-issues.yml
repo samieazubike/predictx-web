@@ -1,0 +1,136 @@
+name: Create GitHub Issues from Markdown
+
+on:
+    push:
+        branches: [main]
+        paths:
+            - ".github/issues/*.md"
+    workflow_dispatch: # Allow manual trigger
+
+jobs:
+    create-issues:
+        runs-on: ubuntu-latest
+        permissions:
+            issues: write
+            contents: read
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 2 # Need previous commit to detect changed files
+
+            - name: Detect issue files
+              id: detect
+              run: |
+                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                    # Manual trigger — process all issue files
+                    FILES=$(find .github/issues -name '*.md' | sort)
+                  else
+                    # Push trigger — only process new/modified files
+                    FILES=$(git diff --name-only --diff-filter=AM HEAD~1 HEAD -- '.github/issues/*.md' | sort)
+                  fi
+
+                  if [ -z "$FILES" ]; then
+                    echo "No issue files to process."
+                    echo "has_files=false" >> "$GITHUB_OUTPUT"
+                  else
+                    echo "has_files=true" >> "$GITHUB_OUTPUT"
+                    # Write files to a temp file (handles newlines safely)
+                    echo "$FILES" > /tmp/issue_files.txt
+                    echo "Files to process:"
+                    cat /tmp/issue_files.txt
+                  fi
+
+            - name: Create issues
+              if: steps.detect.outputs.has_files == 'true'
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  CREATED=0
+                  SKIPPED=0
+                  FAILED=0
+
+                  while IFS= read -r file; do
+                    [ -z "$file" ] && continue
+
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "Processing: $file"
+
+                    # Extract title from first H1 line (remove "# Issue #XX: " prefix)
+                    RAW_TITLE=$(head -1 "$file" | sed 's/^# //')
+                    # Clean title: remove "Issue #XX: " prefix if present
+                    TITLE=$(echo "$RAW_TITLE" | sed 's/^Issue #[0-9]*: //')
+
+                    if [ -z "$TITLE" ]; then
+                      echo "⚠ Skipping $file — no title found"
+                      SKIPPED=$((SKIPPED + 1))
+                      continue
+                    fi
+
+                    # Check if issue with this title already exists
+                    EXISTING=$(gh issue list --search "\"$TITLE\" in:title" --state all --json number --jq 'length')
+                    if [ "$EXISTING" -gt 0 ] 2>/dev/null; then
+                      echo "⏭ Issue already exists: $TITLE"
+                      SKIPPED=$((SKIPPED + 1))
+                      continue
+                    fi
+
+                    # Extract labels from the **Labels:** line
+                    LABELS_LINE=$(grep '^\*\*Labels:\*\*' "$file" || true)
+                    LABEL_ARGS=""
+                    if [ -n "$LABELS_LINE" ]; then
+                      # Parse backtick-wrapped labels: `label1`, `label2`
+                      LABELS=$(echo "$LABELS_LINE" | grep -oP '`\K[^`]+' | paste -sd ',' -)
+                      if [ -n "$LABELS" ]; then
+                        LABEL_ARGS="--label $LABELS"
+                      fi
+                    fi
+
+                    # Extract milestone from the **Milestone:** line
+                    MILESTONE_LINE=$(grep '^\*\*Milestone:\*\*' "$file" || true)
+                    MILESTONE_ARGS=""
+                    if [ -n "$MILESTONE_LINE" ]; then
+                      MILESTONE=$(echo "$MILESTONE_LINE" | sed 's/\*\*Milestone:\*\* //' | xargs)
+                      if [ -n "$MILESTONE" ]; then
+                        MILESTONE_ARGS="--milestone $MILESTONE"
+                      fi
+                    fi
+
+                    # Use the full file content as the issue body
+                    BODY=$(cat "$file")
+
+                    # Create the issue
+                    if gh issue create \
+                      --title "$TITLE" \
+                      --body "$BODY" \
+                      $LABEL_ARGS \
+                      2>/dev/null; then
+                      echo "✅ Created: $TITLE"
+                      CREATED=$((CREATED + 1))
+                    else
+                      # Retry without labels (labels may not exist yet)
+                      if gh issue create \
+                        --title "$TITLE" \
+                        --body "$BODY" \
+                        2>/dev/null; then
+                        echo "✅ Created (without labels): $TITLE"
+                        CREATED=$((CREATED + 1))
+                      else
+                        echo "❌ Failed to create: $TITLE"
+                        FAILED=$((FAILED + 1))
+                      fi
+                    fi
+
+                    # Rate limit: small delay between API calls
+                    sleep 1
+
+                  done < /tmp/issue_files.txt
+
+                  echo ""
+                  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                  echo "Summary: $CREATED created, $SKIPPED skipped, $FAILED failed"
+
+                  if [ "$FAILED" -gt 0 ]; then
+                    exit 1
+                  fi
