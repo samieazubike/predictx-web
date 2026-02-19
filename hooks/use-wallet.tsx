@@ -3,39 +3,79 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
-interface WalletState {
-  isConnected: boolean
+interface ConnectPayload {
   address: string
   balance: number
-  connect: () => void
+}
+
+interface WalletState {
+
+  isConnected: boolean
+
+  address: string
+
+  balance: number
+
+  connect: (payload: ConnectPayload) => void
+
   disconnect: () => void
+
   updateBalance: (amount: number) => void
+
 }
 
 export const useWallet = create<WalletState>()(
+
   persist(
+
     (set) => ({
+
       isConnected: false,
+
       address: "",
-      balance: 2500,
-      connect: () =>
+
+      balance: 0,
+
+      connect: ({ address, balance }) =>
+
         set({
+
           isConnected: true,
-          address: "0x742d...5e9f",
-          balance: 2500,
+
+          address,
+
+          balance,
+
         }),
+
       disconnect: () =>
+
         set({
+
           isConnected: false,
+
           address: "",
+
+          balance: 0,
+
         }),
+
       updateBalance: (amount) =>
+
         set((state) => ({
+
           balance: state.balance + amount,
+
         })),
+
     }),
+
     {
+
       name: "wallet-storage",
+
     },
+
   ),
+
 )

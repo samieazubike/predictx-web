@@ -3,8 +3,9 @@ import type { Metadata } from "next"
 import { Rajdhani, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
-import { Header } from "@/components/header"
+import { Header } from "@/components/layout/Header"
 import { Toaster } from "@/components/ui/sonner"
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav"
 
 const rajdhani = Rajdhani({
   subsets: ["latin"],
@@ -44,11 +45,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${rajdhani.variable} font-sans antialiased`}>
+      <body className={`${rajdhani.variable} min-h-screen font-sans antialiased`}>
+        <div className="md:pt-16 pb-16 md:pb-0">
         <Header />
+        </div>
         {children}
         <Toaster />
         <Analytics />
+        <MobileBottomNav />
       </body>
     </html>
   )
