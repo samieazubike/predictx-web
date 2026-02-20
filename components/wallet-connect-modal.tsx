@@ -1,13 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { useWallet } from "@/hooks/use-wallet"
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+import { Button } from "@/components/ui/button";
+import { useWallet } from "@/hooks/use-wallet";
 
 interface WalletConnectModalProps {
-  open: boolean
-  onClose: () => void
+  open: boolean;
+  onClose: () => void;
 }
 
 const wallets = [
@@ -15,36 +21,51 @@ const wallets = [
   { name: "Albedo", icon: "⭐", popular: true },
   { name: "xBull", icon: "🐂", popular: false },
   { name: "Rabet", icon: "🪐", popular: false },
-]
+];
 
-export function WalletConnectModal({ open, onClose }: WalletConnectModalProps) {
-  const [isConnecting, setIsConnecting] = useState(false)
-  const [selectedWallet, setSelectedWallet] = useState<string | null>(null)
+export function WalletConnectModal({
+  open,
+  onClose,
+}: WalletConnectModalProps) {
 
-  const { connect } = useWallet()
+  const { connect, isConnecting } = useWallet();
+
+  const [selectedWallet, setSelectedWallet] =
+    useState<string | null>(null);
 
   const handleConnect = async (walletName: string) => {
-    setSelectedWallet(walletName)
-    setIsConnecting(true)
 
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    setSelectedWallet(walletName);
 
-   
-    connect({
-      address: "GDKXB...KL9F3H",
-      balance: 20833.42,
-    })
+    try {
 
-    setIsConnecting(false)
-    onClose()
-  }
+      await connect({
+        address: "GDKXB...KL9F3H",
+        balance: 20833.42,
+      });
+
+      onClose();
+
+    } catch (error) {
+
+      console.error(error);
+
+    } finally {
+
+      setSelectedWallet(null);
+
+    }
+
+  };
 
   return (
+
     <Dialog open={open} onOpenChange={onClose}>
+
       <DialogContent className="bg-surface border-2 border-primary/30 max-w-md clip-corner-lg">
 
-        {/* HEADER */}
         <DialogHeader>
+
           <DialogTitle className="
             text-2xl
             font-display
@@ -53,11 +74,14 @@ export function WalletConnectModal({ open, onClose }: WalletConnectModalProps) {
             uppercase
             tracking-wider
           ">
+
             Connect Stellar Wallet
+
           </DialogTitle>
+
         </DialogHeader>
 
-        {/* WALLET LIST */}
+
         <div className="space-y-3 mt-4">
 
           {wallets.map((wallet) => (
@@ -79,34 +103,34 @@ export function WalletConnectModal({ open, onClose }: WalletConnectModalProps) {
                 hover:bg-surface
                 transition-all
                 group
-                clip-corner
+                clip-corner-lg
                 relative
                 overflow-hidden
               "
             >
 
-              {/* Scan line animation */}
+              {/* scan animation */}
+
               <div className="
                 absolute
                 inset-0
-                bg-linear-to-r
+                bg-gradient-to-r
                 from-transparent
                 via-primary/10
                 to-transparent
-               -translate-x-full
+                -translate-x-full
                 group-hover:translate-x-full
                 transition-transform
                 duration-1000
               " />
 
-              {/* Icon */}
               <span className="text-3xl mr-4">
 
                 {wallet.icon}
 
               </span>
 
-              {/* Wallet Info */}
+
               <div className="flex-1">
 
                 <div className="flex items-center gap-2">
@@ -116,6 +140,7 @@ export function WalletConnectModal({ open, onClose }: WalletConnectModalProps) {
                     {wallet.name}
 
                   </span>
+
 
                   {wallet.popular && (
 
@@ -127,14 +152,18 @@ export function WalletConnectModal({ open, onClose }: WalletConnectModalProps) {
                       py-0.5
                       rounded
                     ">
+
                       POPULAR
+
                     </span>
 
                   )}
 
                 </div>
 
-                {isConnecting && selectedWallet === wallet.name && (
+
+                {isConnecting &&
+                  selectedWallet === wallet.name && (
 
                   <span className="text-xs text-muted-foreground">
 
@@ -152,7 +181,7 @@ export function WalletConnectModal({ open, onClose }: WalletConnectModalProps) {
 
         </div>
 
-        
+
         <p className="text-xs text-muted-foreground text-center mt-6">
 
           Connect your Stellar wallet to access PredictX
@@ -160,6 +189,9 @@ export function WalletConnectModal({ open, onClose }: WalletConnectModalProps) {
         </p>
 
       </DialogContent>
+
     </Dialog>
-  )
+
+  );
+
 }

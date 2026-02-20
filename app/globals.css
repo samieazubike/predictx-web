@@ -4,6 +4,15 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Custom cyberpunk colors - hex format */
+  --background-deep: #0a0e27;
+  --background-surface: #1a1f3a;
+  --accent-cyan: #00d9ff;
+  --accent-green: #39ff14;
+  --accent-magenta: #ff006e;
+  --accent-gold: #ffd700;
+
+  /* Existing OKLCH colors */
   --background: oklch(0.08 0.01 264); /* Deep dark blue */
   --background-secondary: oklch(0.12 0.02 264); /* Slightly lighter dark */
   --foreground: oklch(0.98 0 0); /* Almost white */
@@ -37,6 +46,15 @@
 }
 
 .dark {
+  /* Custom cyberpunk colors - hex format */
+  --background-deep: #0a0e27;
+  --background-surface: #1a1f3a;
+  --accent-cyan: #00d9ff;
+  --accent-green: #39ff14;
+  --accent-magenta: #ff006e;
+  --accent-gold: #ffd700;
+
+  /* Existing OKLCH colors */
   --background: oklch(0.08 0.01 264);
   --background-secondary: oklch(0.12 0.02 264);
   --foreground: oklch(0.98 0 0);
@@ -69,11 +87,16 @@
 }
 
 @theme inline {
-  --font-sans: "Rajdhani", "Geist", "Geist Fallback", system-ui, sans-serif;
-  --font-mono: "Geist Mono", "Geist Mono Fallback", monospace;
-  --font-display: "Rajdhani", "Geist", sans-serif;
+  /* Font families - using CSS variables from next/font/google */
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  /* Base colors */
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
+  --color-background-deep: var(--background-deep);
+  --color-background-surface: var(--background-surface);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -96,11 +119,20 @@
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
   --color-gold: var(--gold);
+
+  /* Cyberpunk accent colors */
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-green: var(--accent-green);
+  --color-accent-magenta: var(--accent-magenta);
+  --color-accent-gold: var(--accent-gold);
+
+  /* Chart colors */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 2px);
@@ -221,6 +253,154 @@
       transform: translateY(-20px) translateX(15px);
       opacity: 0.8;
     }
+  }
+
+  /* Scan line animation for cyberpunk effect */
+  @keyframes scan-line {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100vh);
+    }
+  }
+
+  .animate-scan-line {
+    animation: scan-line 8s linear infinite;
+  }
+
+  .scan-line-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      0deg,
+      transparent 0%,
+      rgba(0, 217, 255, 0.03) 2%,
+      transparent 4%
+    );
+    background-size: 100% 8px;
+    animation: scan-line 8s linear infinite;
+  }
+
+  /* Shimmer animation for card transitions */
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  .shimmer-gradient {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 217, 255, 0.1),
+      rgba(0, 217, 255, 0.3),
+      rgba(0, 217, 255, 0.1)
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Shake animation for alerts/notifications */
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: translateX(-2px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+      transform: translateX(2px);
+    }
+  }
+
+  .animate-shake {
+    animation: shake 0.5s;
+  }
+
+  /* Named glow shadows for various elements */
+  .shadow-cyan-glow {
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+  }
+
+  .shadow-green-glow {
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
+  }
+
+  .shadow-magenta-glow {
+    box-shadow: 0 0 15px rgba(255, 0, 110, 0.5);
+  }
+
+  .shadow-gold-glow {
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  }
+
+  /* Scrollbar styling for dark theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 217, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 217, 255, 0.5);
+  }
+
+  /* Selection color - cyan highlight */
+  ::selection {
+    background-color: rgba(0, 217, 255, 0.3);
+    color: inherit;
+  }
+
+  /* Starfield/particle background utility */
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .starfield {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(2px 2px at 20px 30px, rgba(0, 217, 255, 0.5), rgba(0, 0, 0, 0)),
+      radial-gradient(2px 2px at 60px 70px, rgba(57, 255, 20, 0.5), rgba(0, 0, 0, 0)),
+      radial-gradient(1px 1px at 50px 50px, rgba(255, 215, 0, 0.5), rgba(0, 0, 0, 0)),
+      radial-gradient(1px 1px at 130px 80px, rgba(255, 0, 110, 0.5), rgba(0, 0, 0, 0)),
+      radial-gradient(2px 2px at 90px 10px, rgba(0, 217, 255, 0.5), rgba(0, 0, 0, 0));
+    background-size: 200px 200px;
+    animation: twinkle 5s infinite;
   }
 
   .counter {
