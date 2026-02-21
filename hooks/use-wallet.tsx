@@ -2,128 +2,104 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import {
-	MOCK_USER,
-	XLM_RATE,
-	STORAGE_KEYS,
-	type WalletProvider,
-} from "@/lib/mock-data";
+import { requestAccess, isConnected as checkFreighter } from "@stellar/freighter-api";
 
-const STELLAR_FEE_XLM = 0.00001; // 100 stroops
-
-export interface TxReceipt {
-	hash: string;
-	amount: number;
-	amountXLM: number;
-	description: string;
-	timestamp: string;
+export interface ConnectPayload {
+  address: string;
+  balance: number;
 }
 
 interface WalletState {
-	isConnected: boolean;
-	isConnecting: boolean;
-	address: string;
-	displayAddress: string;
-	balance: number; // USD
-	balanceXLM: number;
-	network: string;
-	provider: WalletProvider | null;
-	connect: (provider: WalletProvider) => Promise<void>;
-	disconnect: () => void;
-	sendTransaction: (amount: number, description: string) => Promise<TxReceipt>;
-	updateBalance: (amountUSD: number) => void;
+  isConnected: boolean;
+  isConnecting: boolean;
+  address: string;
+  balance: number;
+
+  connect: () => Promise<void>;
+  disconnect: () => void;
+  updateBalance: (amount: number) => void;
 }
 
 export const useWallet = create<WalletState>()(
-	persist(
-		(set, get) => ({
-			isConnected: false,
-			isConnecting: false,
-			address: "",
-			displayAddress: "",
-			balance: MOCK_USER.balanceUSD,
-			balanceXLM: MOCK_USER.balanceXLM,
-			network: "Stellar Mainnet",
-			provider: null,
+  persist(
+    (set) => ({
+      isConnected: false,
+      isConnecting: false,
+      address: "",
+      balance: 0,
 
-			connect: async (provider) => {
-				set({ isConnecting: true });
-				// Simulate 1–2 s connection delay
-				await new Promise((r) =>
-					setTimeout(r, 1_000 + Math.random() * 1_000),
-				);
+      connect: async () => {
+        set({ isConnecting: true });
 
-				// 95 % success rate
-				if (Math.random() < 0.05) {
-					set({ isConnecting: false });
-					throw new Error(
-						`${provider} connection failed. Please try again.`,
-					);
-				}
+        try {
+          // 1. Check if installed
+          const status = await checkFreighter();
+          // Freighter v2 returns an object, v1 returned a boolean. This handles both!
+          if (!status || (typeof status === 'object' && !status.isConnected)) {
+            alert("Freighter is not installed. Please install the browser extension.");
+            return;
+          }
 
-				set({
-					isConnecting: false,
-					isConnected: true,
-					provider,
-					address: MOCK_USER.address,
-					displayAddress: MOCK_USER.displayAddress,
-					balance: MOCK_USER.balanceUSD,
-					balanceXLM: MOCK_USER.balanceXLM,
-					network: "Stellar Mainnet",
-				});
-			},
+          const accessResponse = await requestAccess();
+          
+          if ((accessResponse as any).error) {
+            throw new Error((accessResponse as any).error);
+          }
 
-			disconnect: () => {
-				set({
-					isConnected: false,
-					isConnecting: false,
-					address: "",
-					displayAddress: "",
-					provider: null,
-				});
-				if (typeof window !== "undefined")
-					localStorage.removeItem(STORAGE_KEYS.wallet);
-			},
+          const publicKey = typeof accessResponse === "string" 
+            ? accessResponse 
+            : (accessResponse as any).address;
 
-			sendTransaction: async (amount: number, description: string) => {
-				const { balance } = get();
-				if (amount > balance) throw new Error("Insufficient balance");
+          if (!publicKey) {
+            throw new Error("Failed to retrieve public key");
+          }
+          
+          const response = await fetch(
+            `https://horizon.stellar.org/accounts/${publicKey}`
+          );
+          
+          if (!response.ok) {
+            set({
+              isConnected: true,
+              address: publicKey,
+              balance: 0,
+            });
+            return;
+          }
 
-				// Simulate 1–2 s tx delay
-				await new Promise((r) =>
-					setTimeout(r, 1_000 + Math.random() * 1_000),
-				);
+          const data = await response.json();
+          const nativeBalance = data.balances.find(
+            (b: any) => b.asset_type === "native"
+          )?.balance;
 
-				// 5 % random failure
-				if (Math.random() < 0.05)
-					throw new Error("Transaction failed. Please try again.");
+          set({
+            isConnected: true,
+            address: publicKey,
+            balance: parseFloat(nativeBalance ?? "0"),
+          });
+        } catch (error) {
+          console.error("Freighter connect error:", error);
+          throw error;
+        } finally {
+          set({ isConnecting: false });
+        }
+      },
 
-				const hash = Array.from(crypto.getRandomValues(new Uint8Array(32)))
-					.map((b) => b.toString(16).padStart(2, "0"))
-					.join("");
+      disconnect: () =>
+        set({
+          isConnected: false,
+          address: "",
+          balance: 0,
+          isConnecting: false,
+        }),
 
-				const amountXLM = amount / XLM_RATE;
-
-				set((s) => ({
-					balance: s.balance - amount,
-					balanceXLM: s.balanceXLM - amountXLM - STELLAR_FEE_XLM,
-				}));
-
-				return {
-					hash,
-					amount,
-					amountXLM,
-					description,
-					timestamp: new Date().toISOString(),
-				};
-			},
-
-			updateBalance: (amountUSD: number) =>
-				set((s) => ({
-					balance: s.balance + amountUSD,
-					balanceXLM: s.balanceXLM + amountUSD / XLM_RATE,
-				})),
-		}),
-		{ name: STORAGE_KEYS.wallet },
-	),
+      updateBalance: (amount) =>
+        set((state) => ({
+          balance: state.balance + amount,
+        })),
+    }),
+    {
+      name: "wallet-storage",
+    }
+  )
 );

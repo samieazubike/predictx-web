@@ -3,8 +3,11 @@ import type { Metadata } from "next"
 import { Orbitron, Barlow, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
-import { Header } from "@/components/header"
+
 import { Toaster } from "@/components/ui/sonner"
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav"
+import { Header } from "@/components/layout/Header"
+
 
 // Display font - bold, all-caps, aggressive
 const orbitron = Orbitron({
@@ -57,17 +60,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body
-        className={`${orbitron.variable} ${barlow.variable} ${jetbrainsMono.variable} font-body antialiased`}
+     <body className={`${orbitron.variable} ${barlow.variable} ${jetbrainsMono.variable} font-body antialiased`}
         style={{
           backgroundImage: `linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%)`,
           minHeight: "100vh",
-        }}
-      >
-        <Header />
+        }}>
+       
+        <div className="md:pt-16 pb-16 md:pb-0">
+       <Header />
+        </div>
         {children}
         <Toaster theme="dark" position="bottom-right" />
         <Analytics />
+        <MobileBottomNav />
       </body>
     </html>
   )
