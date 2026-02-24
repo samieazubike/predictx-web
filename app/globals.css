@@ -683,7 +683,63 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .animate-glow-pulse {
+  .animate-glow-pulse {
+    animation: none;
+    }
+  }
+
+  /* Hero tagline — optional glitch flicker on load */
+  @keyframes hero-flicker {
+    0%,
+    90%,
+    100% {
+      opacity: 1;
+      filter: none;
+    }
+    92% {
+      opacity: 0.85;
+      filter: hue-rotate(-5deg);
+    }
+    94% {
+      opacity: 1;
+      filter: hue-rotate(2deg);
+    }
+    96% {
+      opacity: 0.9;
+    }
+    98% {
+      opacity: 1;
+      filter: none;
+    }
+  }
+
+  .hero-tagline {
+    animation: hero-flicker 0.6s ease-out 0.2s both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-tagline {
+      animation: none;
+    }
+  }
+
+  /* Hero primary CTA — pulsing glow to draw attention */
+  @keyframes hero-cta-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 15px rgba(0, 217, 255, 0.5), inset 0 0 10px rgba(0, 217, 255, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 28px rgba(0, 217, 255, 0.7), inset 0 0 18px rgba(0, 217, 255, 0.25);
+    }
+  }
+
+  .hero-cta-primary {
+    animation: hero-cta-pulse 2s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-cta-primary {
       animation: none;
     }
   }
