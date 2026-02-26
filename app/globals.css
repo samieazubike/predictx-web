@@ -132,7 +132,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  
+
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 2px);
@@ -189,7 +189,8 @@
   }
 
   .bg-grid-pattern {
-    background-image: linear-gradient(rgba(0, 217, 255, 0.1) 1px, transparent 1px),
+    background-image:
+      linear-gradient(rgba(0, 217, 255, 0.1) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 217, 255, 0.1) 1px, transparent 1px);
     background-size: 50px 50px;
   }
@@ -394,11 +395,31 @@
     inset: 0;
     pointer-events: none;
     background-image:
-      radial-gradient(2px 2px at 20px 30px, rgba(0, 217, 255, 0.5), rgba(0, 0, 0, 0)),
-      radial-gradient(2px 2px at 60px 70px, rgba(57, 255, 20, 0.5), rgba(0, 0, 0, 0)),
-      radial-gradient(1px 1px at 50px 50px, rgba(255, 215, 0, 0.5), rgba(0, 0, 0, 0)),
-      radial-gradient(1px 1px at 130px 80px, rgba(255, 0, 110, 0.5), rgba(0, 0, 0, 0)),
-      radial-gradient(2px 2px at 90px 10px, rgba(0, 217, 255, 0.5), rgba(0, 0, 0, 0));
+      radial-gradient(
+        2px 2px at 20px 30px,
+        rgba(0, 217, 255, 0.5),
+        rgba(0, 0, 0, 0)
+      ),
+      radial-gradient(
+        2px 2px at 60px 70px,
+        rgba(57, 255, 20, 0.5),
+        rgba(0, 0, 0, 0)
+      ),
+      radial-gradient(
+        1px 1px at 50px 50px,
+        rgba(255, 215, 0, 0.5),
+        rgba(0, 0, 0, 0)
+      ),
+      radial-gradient(
+        1px 1px at 130px 80px,
+        rgba(255, 0, 110, 0.5),
+        rgba(0, 0, 0, 0)
+      ),
+      radial-gradient(
+        2px 2px at 90px 10px,
+        rgba(0, 217, 255, 0.5),
+        rgba(0, 0, 0, 0)
+      );
     background-size: 200px 200px;
     animation: twinkle 5s infinite;
   }
@@ -534,7 +555,8 @@
   }
 
   @keyframes holo-shift {
-    0%, 100% {
+    0%,
+    100% {
       background-position: 0% 0%;
     }
     50% {
@@ -597,7 +619,8 @@
   }
 
   @keyframes shield-pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.3;
       transform: scale(1);
     }
@@ -670,7 +693,8 @@
 
   /* Glow pulse animation */
   @keyframes glow-pulse {
-    0%, 100% {
+    0%,
+    100% {
       filter: brightness(1);
     }
     50% {
@@ -690,7 +714,8 @@
 
   /* Float animation */
   @keyframes float-subtle {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0);
     }
     50% {
@@ -756,10 +781,12 @@
 
   /* Electric arc flash effect */
   @keyframes arc-flash {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0;
     }
-    10%, 90% {
+    10%,
+    90% {
       opacity: 1;
     }
   }
@@ -770,7 +797,8 @@
 
   /* Typing cursor animation */
   @keyframes typing-cursor {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {
@@ -807,7 +835,8 @@
 
   /* Tick indicator animation */
   @keyframes tick-pulse {
-    0%, 100% {
+    0%,
+    100% {
       transform: scale(1);
       opacity: 1;
     }
@@ -840,5 +869,139 @@
     background: radial-gradient(circle, #ffd700, transparent);
     animation: spark 0.5s ease-out forwards;
     pointer-events: none;
+  }
+
+  /* ============================================================
+     Glitch Effect — for processing/loading states
+  ============================================================ */
+  @keyframes glitch {
+    0%,
+    100% {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transform: translate(0);
+      color: #00d9ff;
+    }
+    5% {
+      clip-path: polygon(0 15%, 100% 15%, 100% 30%, 0 30%);
+      transform: translate(-2px, 1px);
+      color: #ff006e;
+      text-shadow: 2px 0 #39ff14;
+    }
+    10% {
+      clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%);
+      transform: translate(2px, -1px);
+      color: #00d9ff;
+      text-shadow: -2px 0 #ff006e;
+    }
+    15% {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transform: translate(0);
+      color: #00d9ff;
+      text-shadow: none;
+    }
+    80% {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transform: translate(0);
+    }
+    85% {
+      clip-path: polygon(0 40%, 100% 40%, 100% 55%, 0 55%);
+      transform: translate(1px, 2px);
+      color: #ff006e;
+    }
+    90% {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transform: translate(0);
+      color: #00d9ff;
+    }
+  }
+
+  .animate-glitch {
+    animation: glitch 1.8s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-glitch {
+      animation: none;
+    }
+  }
+
+  /* ============================================================
+     Screen shake — for failure states
+  ============================================================ */
+  @keyframes screen-shake {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    10% {
+      transform: translate(-4px, 2px);
+    }
+    20% {
+      transform: translate(4px, -2px);
+    }
+    30% {
+      transform: translate(-3px, 3px);
+    }
+    40% {
+      transform: translate(3px, -1px);
+    }
+    50% {
+      transform: translate(-2px, 2px);
+    }
+    60% {
+      transform: translate(2px, -2px);
+    }
+    70% {
+      transform: translate(-1px, 1px);
+    }
+    80% {
+      transform: translate(1px, 0px);
+    }
+    90% {
+      transform: translate(0px, 1px);
+    }
+  }
+
+  .animate-screen-shake {
+    animation: screen-shake 0.35s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-screen-shake {
+      animation: none;
+    }
+  }
+
+  /* ============================================================
+     Victory text — spring scale-in for success states
+  ============================================================ */
+  @keyframes victory-scale {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+    80% {
+      transform: scale(0.97);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-victory {
+    animation: victory-scale 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-victory {
+      animation: none;
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 }

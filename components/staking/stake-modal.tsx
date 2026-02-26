@@ -213,7 +213,7 @@ function ProcessingOverlay() {
       </div>
 
       {/* Text */}
-      <p className="font-display text-sm uppercase tracking-widest text-[var(--accent-cyan)] text-glow-cyan">
+      <p className="font-display text-sm uppercase tracking-widest text-[var(--accent-cyan)] text-glow-cyan animate-glitch">
         Processing transaction on Stellar...
       </p>
     </motion.div>
@@ -720,17 +720,17 @@ export function StakeModal({
                       const color =
                         s === "yes"
                           ? {
-                              bg: "rgba(0,217,255,0.15)",
-                              border: "rgba(0,217,255,0.6)",
-                              glow: "rgba(0,217,255,0.5)",
-                              text: "#00d9ff",
-                            }
+                            bg: "rgba(0,217,255,0.15)",
+                            border: "rgba(0,217,255,0.6)",
+                            glow: "rgba(0,217,255,0.5)",
+                            text: "#00d9ff",
+                          }
                           : {
-                              bg: "rgba(255,0,110,0.15)",
-                              border: "rgba(255,0,110,0.6)",
-                              glow: "rgba(255,0,110,0.5)",
-                              text: "#ff006e",
-                            };
+                            bg: "rgba(255,0,110,0.15)",
+                            border: "rgba(255,0,110,0.6)",
+                            glow: "rgba(255,0,110,0.5)",
+                            text: "#ff006e",
+                          };
 
                       return (
                         <motion.button

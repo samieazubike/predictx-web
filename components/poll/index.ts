@@ -1,5 +1,5 @@
 /**
- * Poll components - CreatePollModal, PollPreview
+ * Poll components
  */
 
-// No poll-specific components yet
+export { CreatePollModal } from "./create-poll-modal";

@@ -7,6 +7,8 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/sonner"
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav"
 import { Header } from "@/components/layout/Header"
+import { PageTransition } from "@/components/layout/page-transition"
+import { ScreenFlashOverlay } from "@/hooks/use-screen-flash"
 
 
 // Display font - bold, all-caps, aggressive
@@ -60,16 +62,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-     <body className={`${orbitron.variable} ${barlow.variable} ${jetbrainsMono.variable} font-body antialiased`}
+      <body className={`${orbitron.variable} ${barlow.variable} ${jetbrainsMono.variable} font-body antialiased`}
         style={{
           backgroundImage: `linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%)`,
           minHeight: "100vh",
         }}>
-       
+
         <div className="md:pt-16 pb-16 md:pb-0">
-       <Header />
+          <Header />
         </div>
-        {children}
+        <PageTransition>
+          {children}
+        </PageTransition>
+        <ScreenFlashOverlay />
         <Toaster theme="dark" position="bottom-right" />
         <Analytics />
         <MobileBottomNav />
