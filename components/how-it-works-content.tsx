@@ -1,302 +1,457 @@
-import { Zap, Users, Trophy, Shield, Target, Coins } from "lucide-react"
+"use client";
+
+import { motion } from "framer-motion";
+import {
+  Calendar,
+  Target,
+  Coins,
+  Eye,
+  Scale,
+  Trophy,
+  Zap,
+  Shield,
+  History,
+  Lock,
+  ChevronDown,
+  Plus,
+  Minus,
+  Wallet
+} from "lucide-react";
+import {
+  GlowCard,
+  GlowIcon,
+  GamingButton,
+  PoolProgressBar,
+  AnimatedCounter
+} from "@/components/shared";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+
+const variantColors = {
+  default: "#00d9ff",
+  primary: "#00d9ff",
+  success: "#39ff14",
+  danger: "#ff006e",
+  gold: "#ffd700",
+};
 
 const steps = [
   {
-    number: "01",
     title: "Browse Matches",
-    description: "Explore upcoming football matches and view all available prediction polls for each game.",
+    description: "Explore upcoming Premier League matches and see what predictions are available.",
+    icon: Calendar,
+    color: "default"
+  },
+  {
+    title: "Pick a Prediction",
+    description: "Choose a poll like 'Will Palmer score?' and decide if you think YES or NO.",
     icon: Target,
-    color: "text-primary",
-    glow: "glow-cyan",
+    color: "success"
   },
   {
-    number: "02",
-    title: "Choose Your Prediction",
-    description: "Select a poll that interests you. See real-time pool distributions showing how others are betting.",
-    icon: Zap,
-    color: "text-success",
-    glow: "glow-green",
-  },
-  {
-    number: "03",
     title: "Stake Your Crypto",
-    description: "Pick YES or NO, enter your stake amount, and see your potential winnings calculated live.",
+    description: "Enter your stake amount in XLM. The more you stake, the more you can win.",
     icon: Coins,
-    color: "text-gold",
-    glow: "glow-gold",
+    color: "gold"
   },
   {
-    number: "04",
-    title: "Wait for Resolution",
-    description: "After the match, the community votes on outcomes. Earn rewards by participating as a judge.",
-    icon: Users,
-    color: "text-accent",
-    glow: "glow-magenta",
+    title: "Watch the Match",
+    description: "Sit back and watch. Your prediction locks at kickoff (or the set lock time).",
+    icon: Eye,
+    color: "default"
   },
   {
-    number: "05",
-    title: "Claim Your Winnings",
-    description:
-      "If your prediction was correct, you earn a proportional share of the total pool minus 5% platform fee.",
+    title: "Community Votes",
+    description: "After the match, non-participants vote on the outcome within a 2-hour window.",
+    icon: Scale,
+    color: "danger"
+  },
+  {
+    title: "Collect Winnings",
+    description: "If you predicted correctly, your share of the pool is paid out automatically!",
     icon: Trophy,
-    color: "text-gold",
-    glow: "glow-gold",
-  },
-]
+    color: "success"
+  }
+];
 
-const features = [
+const resolutionStages = [
   {
-    title: "Pool-Based System",
-    description:
-      "All stakes go into a shared pool. Winners split the entire pool proportionally based on their contribution.",
-    icon: Trophy,
+    phase: "1. Match Ends",
+    trigger: "Automatic",
+    description: "Polls enter resolution phase",
+    duration: "—",
+    color: "border-primary"
   },
   {
-    title: "Community Resolution",
-    description: "Non-participants vote on outcomes within a 2-hour window. Voters earn 0.5-1% of the pool as reward.",
-    icon: Users,
+    phase: "2. Community Voting",
+    trigger: "2-hour window",
+    description: "Non-participants vote on outcomes, earn 0.5–1% reward",
+    duration: "2 hours",
+    color: "border-primary"
   },
   {
-    title: "Time-Locked Polls",
-    description: "Polls lock at specific times (kickoff, halftime, etc.) to prevent betting after events occur.",
-    icon: Shield,
+    phase: "3a. Auto-Approve",
+    trigger: ">85% consensus",
+    description: "Result confirmed automatically",
+    duration: "Instant",
+    color: "border-success"
   },
   {
-    title: "Transparent Blockchain",
-    description:
-      "All transactions recorded on-chain. See exactly where your stake goes and how winnings are calculated.",
-    icon: Zap,
+    phase: "3b. Admin Review",
+    trigger: "60–85% consensus",
+    description: "Admins verify with video evidence",
+    duration: "~24 hours",
+    color: "border-gold"
   },
-]
+  {
+    phase: "3c. Multi-sig Review",
+    trigger: "<60% consensus",
+    description: "3 admins must agree",
+    duration: "~48 hours",
+    color: "border-danger"
+  },
+  {
+    phase: "4. Dispute Window",
+    trigger: "After resolution",
+    description: "Anyone can challenge with evidence",
+    duration: "24 hours",
+    color: "border-primary"
+  },
+  {
+    phase: "5. Payout",
+    trigger: "After dispute window",
+    description: "Winners receive pool share",
+    duration: "Automatic",
+    color: "border-success"
+  }
+];
 
-const example = {
-  poll: "Will Palmer score a goal?",
-  yesPool: 7000,
-  noPool: 3000,
-  yourStake: 700,
-  totalPool: 10000,
-  platformFee: 500,
-  winningsPool: 9500,
-  yourPayout: 950,
-  profit: 250,
-}
+const concepts = [
+  {
+    title: "Time Locks",
+    description: "Polls lock at specific times to prevent staking after seeing lineups or events.",
+    icon: Lock
+  },
+  {
+    title: "Proportional Winnings",
+    description: "Win more if you staked more. Your share = (your stake / winning pool) × total pool.",
+    icon: History
+  },
+  {
+    title: "Platform Fee",
+    description: "5% fee on winnings only. You never pay fees on losses.",
+    icon: Zap
+  },
+  {
+    title: "Voter Rewards",
+    description: "Vote on outcomes you didn't stake on and earn 0.5–1% of the pool.",
+    icon: Scale
+  },
+  {
+    title: "Dispute Mechanism",
+    description: "24-hour window to challenge results with evidence.",
+    icon: Shield
+  },
+  {
+    title: "Stellar Network",
+    description: "All transactions happen on the Stellar blockchain — fast, cheap, and transparent.",
+    icon: Zap
+  }
+];
+
+const faqs = [
+  {
+    q: "What happens if I lose?",
+    a: "You lose your staked amount. No additional fees are charged on losses."
+  },
+  {
+    q: "How are winnings calculated?",
+    a: "Winners split the entire pool (minus 5% fee) proportionally to their stake."
+  },
+  {
+    q: "Can I cancel a stake?",
+    a: "No. Once confirmed on-chain, stakes are final and cannot be reversed."
+  },
+  {
+    q: "How do I earn from voting?",
+    a: "Vote on polls you didn't stake on. Earn 0.5–1% of the pool as a reward for accurate votes."
+  },
+  {
+    q: "What wallet do I need?",
+    a: "Any Stellar-compatible wallet: Freighter (recommended), Lobstr, or xBull."
+  },
+  {
+    q: "What token is used?",
+    a: "XLM (Stellar Lumens) — the native token of the Stellar network."
+  },
+  {
+    q: "Is it safe?",
+    a: "The pool mechanics run on Soroban smart contracts on Stellar, providing transparency and security."
+  },
+  {
+    q: "When do I get paid?",
+    a: "After the dispute window closes (24h after resolution), winnings are automatically paid to your wallet."
+  }
+];
 
 export function HowItWorksContent() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
   return (
-    <div className="space-y-16">
-      {/* Steps Section */}
-      <section>
-        <h2 className="font-display text-3xl font-black uppercase text-foreground mb-8 text-center">
-          Get Started in 5 Steps
+    <div className="space-y-32">
+      {/* Section 2: Step-by-Step Visual Guide */}
+      <section className="relative">
+        <h2 className="font-display text-3xl md:text-4xl font-black uppercase text-center mb-20 text-glow-cyan text-primary">
+          HOW IT WORKS
         </h2>
-        <div className="space-y-6">
-          {steps.map((step, index) => (
-            <div
-              key={step.number}
-              className="flex flex-col md:flex-row gap-6 bg-surface border-2 border-border clip-corner-lg p-6 hover:border-primary transition-all group"
-            >
-              <div className="flex items-center gap-4 md:gap-6">
-                <div
-                  className={`w-16 h-16 rounded-full bg-background border-2 border-${step.color} flex items-center justify-center ${step.glow}`}
-                >
-                  <step.icon className={`h-8 w-8 ${step.color}`} />
+
+        <div className="relative">
+          {/* Central Line */}
+          <div className="absolute left-[20px] md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-primary/50 via-primary to-primary/50 -translate-x-1/2 hidden md:block" />
+
+          <div className="space-y-12 relative">
+            {steps.map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                className={cn(
+                  "flex flex-col md:flex-row items-center gap-8",
+                  index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+                )}
+              >
+                <div className="flex-1 w-full">
+                  <GlowCard variant={step.color as any} className="w-full">
+                    <div className="flex items-start gap-6">
+                      <div className="flex-shrink-0">
+                        <GlowIcon
+                          icon={step.icon}
+                          color={variantColors[step.color as keyof typeof variantColors]}
+                          size={32}
+                        />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="font-display text-4xl font-black opacity-20">{index + 1}</span>
+                          <h3 className="font-display text-2xl font-bold uppercase">{step.title}</h3>
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                      </div>
+                    </div>
+                  </GlowCard>
                 </div>
-                <div className="text-4xl font-display font-black text-muted opacity-20">{step.number}</div>
-              </div>
-              <div className="flex-1">
-                <h3 className={`font-display text-2xl font-bold ${step.color} mb-2`}>{step.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{step.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Example Calculation */}
-      <section className="bg-gradient-to-br from-surface via-background-secondary to-surface border-2 border-primary/30 clip-corner-lg p-8">
-        <h2 className="font-display text-3xl font-black uppercase text-primary text-glow-cyan mb-8 text-center">
-          Example Calculation
-        </h2>
-
-        <div className="max-w-3xl mx-auto space-y-6">
-          <div className="text-center mb-8">
-            <div className="text-xl font-bold mb-2">Match: Chelsea vs Man United</div>
-            <div className="text-2xl font-display font-black text-foreground">"{example.poll}"</div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 bg-success/20 border border-success rounded">
-              <div className="text-xs text-success font-bold uppercase mb-1">YES Pool</div>
-              <div className="text-2xl font-mono font-black text-success">${example.yesPool.toLocaleString()}</div>
-              <div className="text-xs text-muted-foreground mt-1">Your stake: ${example.yourStake}</div>
-            </div>
-            <div className="p-4 bg-accent/20 border border-accent rounded">
-              <div className="text-xs text-accent font-bold uppercase mb-1">NO Pool</div>
-              <div className="text-2xl font-mono font-black text-accent">${example.noPool.toLocaleString()}</div>
-            </div>
-          </div>
-
-          <div className="space-y-3 p-6 bg-background rounded border border-border">
-            <div className="flex justify-between text-lg">
-              <span className="text-muted-foreground">Total Pool:</span>
-              <span className="font-mono font-bold">${example.totalPool.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Platform Fee (5%):</span>
-              <span className="font-mono text-accent">-${example.platformFee.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Winnings Pool:</span>
-              <span className="font-mono font-bold">${example.winningsPool.toLocaleString()}</span>
-            </div>
-            <div className="h-px bg-border my-3" />
-            <div className="text-sm text-muted-foreground mb-2">
-              Palmer scores! YES wins. You staked ${example.yourStake} (10% of YES pool)
-            </div>
-            <div className="flex justify-between text-xl">
-              <span className="font-bold text-gold">Your Payout:</span>
-              <span className="font-mono font-black text-gold text-glow-gold">
-                ${example.yourPayout.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex justify-between text-lg">
-              <span className="font-bold text-success">Net Profit:</span>
-              <span className="font-mono font-black text-success">+${example.profit.toLocaleString()}</span>
-            </div>
+                <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-background border-2 border-primary z-10 glow-cyan">
+                  <div className="w-3 h-3 rounded-full bg-primary animate-pulse" />
+                </div>
+                <div className="flex-1 hidden md:block" />
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Key Features */}
+      {/* Section 3: Pool Mechanics Explained */}
       <section>
-        <h2 className="font-display text-3xl font-black uppercase text-foreground mb-8 text-center">Key Features</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="bg-surface border border-border clip-corner p-6 hover:border-primary transition-all group"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <feature.icon className="h-6 w-6 text-primary" />
+        <div className="text-center mb-16">
+          <h2 className="font-display text-3xl md:text-4xl font-black uppercase mb-4 text-glow-success text-success">
+            How the Pool System Works
+          </h2>
+          <p className="text-muted-foreground text-xl capitalize">Visual walkthrough: "Will Palmer score a goal?"</p>
+        </div>
+
+        <GlowCard className="max-w-4xl mx-auto backdrop-blur-md bg-surface/40">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center p-4">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <div className="flex justify-between items-end">
+                  <span className="font-display text-xl font-bold text-success">YES Pool</span>
+                  <span className="font-mono text-2xl font-black text-success">$7,000</span>
                 </div>
+                <PoolProgressBar
+                  yesPercentage={70}
+                  yesAmount={7000}
+                  noAmount={3000}
+                  className="h-4"
+                />
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-end">
+                  <span className="font-display text-xl font-bold text-danger">NO Pool</span>
+                  <span className="font-mono text-2xl font-black text-danger">$3,000</span>
+                </div>
+                <PoolProgressBar
+                  yesPercentage={30}
+                  yesAmount={3000}
+                  noAmount={7000}
+                  className="h-4"
+                />
+              </div>
+
+              <div className="pt-6 border-t border-border/50">
+                <div className="flex justify-between items-center text-2xl">
+                  <span className="font-display font-black text-foreground">Total Pool</span>
+                  <div className="text-primary text-glow-cyan font-mono font-black">
+                    $<AnimatedCounter value={10000} format="number" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-background-secondary rounded-xl p-8 border border-white/5 space-y-6">
+              <div className="flex items-center gap-4 p-4 bg-success/10 border border-success/30 rounded-lg">
+                <Trophy className="text-success h-8 w-8" />
                 <div>
-                  <h3 className="font-display text-xl font-bold text-foreground mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+                  <div className="font-bold text-success">Palmer scores!</div>
+                  <div className="text-sm opacity-80 uppercase tracking-widest">YES wins the match</div>
+                </div>
+              </div>
+
+              <div className="space-y-4 text-sm md:text-base">
+                <div className="flex justify-between py-2 border-b border-white/5">
+                  <span className="text-muted-foreground">Platform Fee (5%)</span>
+                  <span className="text-gold font-mono">-$500</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-white/5 font-bold">
+                  <span>Winnings Distributed</span>
+                  <span className="text-success font-mono">$9,500</span>
+                </div>
+
+                <div className="mt-8 p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-3">
+                  <div className="text-xs uppercase font-bold text-primary tracking-widest mb-2">Example Calculation</div>
+                  <div className="flex justify-between">
+                    <span className="text-xs md:text-sm">You staked (10% of YES)</span>
+                    <span className="font-mono">$700</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs md:text-sm">Your Payout</span>
+                    <span className="text-success font-mono font-black">
+                      $<AnimatedCounter value={950} format="number" />
+                    </span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-white/10 font-black">
+                    <span className="text-success">Net Profit</span>
+                    <span className="text-success font-mono">+$250 (35.7% ROI)</span>
+                  </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        </GlowCard>
       </section>
 
-      {/* Resolution Process */}
-      <section className="bg-surface border-2 border-border clip-corner-lg p-8">
-        <h2 className="font-display text-3xl font-black uppercase text-gold text-glow-gold mb-8 text-center">
-          Resolution Process
-        </h2>
-
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="flex items-start gap-4">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 font-bold text-background text-sm">
-              1
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-2">Community Voting (2-hour window)</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                After match ends, users who didn't participate vote on the outcome. Voters earn 0.5-1% of pool as
-                reward.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4">
-            <div className="w-8 h-8 rounded-full bg-success flex items-center justify-center flex-shrink-0 font-bold text-background text-sm">
-              2
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-2">Automatic Resolution (Above 85% consensus)</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                If voting reaches over 85% consensus, the result is automatically approved and payouts are processed.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4">
-            <div className="w-8 h-8 rounded-full bg-gold flex items-center justify-center flex-shrink-0 font-bold text-background text-sm">
-              3
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-2">Admin Review (60-85% consensus)</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Moderately contentious results require admin verification with video evidence before finalization.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4">
-            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center flex-shrink-0 font-bold text-background text-sm">
-              4
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-2">Multi-sig Review (Below 60% consensus)</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Highly contentious results require 3-admin multi-signature verification with comprehensive evidence.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 font-bold text-background text-sm">
-              5
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-2">Dispute Window (24 hours)</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                After resolution, there's a 24-hour challenge period where users can dispute with evidence before
-                payouts are final.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
+      {/* Section 4: Resolution System Diagram */}
       <section>
-        <h2 className="font-display text-3xl font-black uppercase text-foreground mb-8 text-center">
-          Frequently Asked Questions
+        <h2 className="font-display text-3xl md:text-4xl font-black uppercase text-center mb-16 text-glow-gold text-gold">
+          How Outcomes Are Verified
         </h2>
 
-        <div className="max-w-3xl mx-auto space-y-4">
-          {[
-            {
-              q: "Can I withdraw my stake before the poll locks?",
-              a: "No, stakes are final once placed. Make sure you're confident in your prediction before confirming.",
-            },
-            {
-              q: "What happens if I vote incorrectly as a judge?",
-              a: "There's no penalty for incorrect votes, but consistent bad-faith voting may result in reduced voting privileges.",
-            },
-            {
-              q: "How quickly are winnings paid out?",
-              a: "Payouts are processed immediately after the 24-hour dispute window closes, assuming no active disputes.",
-            },
-            {
-              q: "Can I stake on both YES and NO?",
-              a: "No, you can only stake on one side per poll to maintain fair pool mechanics.",
-            },
-            {
-              q: "What if a match is cancelled?",
-              a: "All stakes are returned in full with no fees if a match is officially cancelled before completion.",
-            },
-          ].map((faq, index) => (
-            <div key={index} className="bg-surface border border-border clip-corner p-6">
-              <h3 className="font-bold text-lg text-primary mb-2">{faq.q}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{faq.a}</p>
+        <div className="overflow-x-auto pb-8 -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="min-w-[800px] flex flex-col md:flex-row gap-4 items-stretch">
+            {resolutionStages.map((stage, index) => (
+              <div key={index} className="flex-1 flex flex-col relative group">
+                <GlowCard className={cn("h-full border-2", stage.color)}>
+                  <div className="space-y-4">
+                    <div className="text-xs uppercase font-bold opacity-60 tracking-widest">{stage.trigger}</div>
+                    <h3 className="font-display text-lg font-black">{stage.phase}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{stage.description}</p>
+                    <div className="text-xs font-mono font-bold text-primary mt-auto">{stage.duration}</div>
+                  </div>
+                </GlowCard>
+                {index < resolutionStages.length - 1 && (
+                  <div className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-4 h-[2px] bg-border" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5: Key Concepts */}
+      <section>
+        <h2 className="font-display text-3xl md:text-4xl font-black uppercase text-center mb-16 text-glow-cyan text-primary">
+          Key Concepts
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {concepts.map((concept, index) => (
+            <GlowCard key={index} className="hover:border-primary transition-all duration-300">
+              <div className="space-y-4">
+                <GlowIcon icon={concept.icon} size={32} color={variantColors.default} />
+                <h3 className="font-display text-xl font-bold uppercase tracking-tight">{concept.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{concept.description}</p>
+              </div>
+            </GlowCard>
+          ))}
+        </div>
+      </section>
+
+      {/* Section 6: FAQ Accordion */}
+      <section className="max-w-3xl mx-auto">
+        <h2 className="font-display text-3xl md:text-4xl font-black uppercase text-center mb-16 text-glow-cyan text-primary">
+          FAQ
+        </h2>
+        <div className="space-y-4">
+          {faqs.map((faq, index) => (
+            <div
+              key={index}
+              className={cn(
+                "group relative border-2 transition-all duration-300",
+                openFaq === index ? "border-primary glow-cyan" : "border-border hover:border-primary/50"
+              )}
+              style={{
+                clipPath: "polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)"
+              }}
+            >
+              <button
+                onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                className="w-full flex items-center justify-between p-6 text-left"
+              >
+                <span className="font-display font-bold text-lg md:text-xl">{faq.q}</span>
+                <motion.div
+                  animate={{ rotate: openFaq === index ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ChevronDown className={cn(
+                    "w-6 h-6 transition-colors",
+                    openFaq === index ? "text-primary" : "text-muted-foreground"
+                  )} />
+                </motion.div>
+              </button>
+
+              <motion.div
+                initial={false}
+                animate={{ height: openFaq === index ? "auto" : 0 }}
+                className="overflow-hidden bg-background-secondary/50"
+              >
+                <div className="p-6 pt-0 text-muted-foreground leading-relaxed">
+                  {faq.a}
+                </div>
+              </motion.div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="relative py-20">
+        <div className="absolute inset-0 bg-primary/5 rounded-3xl -rotate-1 skew-x-1" />
+        <div className="relative text-center space-y-10">
+          <h2 className="font-display text-3xl md:text-5xl font-black uppercase tracking-tighter">
+            Ready to Make Your <span className="text-primary text-glow-cyan">First Prediction?</span>
+          </h2>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <GamingButton variant="primary" size="lg" className="min-w-[12rem]">
+              Explore Matches
+            </GamingButton>
+            <GamingButton variant="ghost" size="lg" className="min-w-[12rem] gap-2">
+              <Wallet className="h-5 w-5" />
+              Connect Wallet
+            </GamingButton>
+          </div>
         </div>
       </section>
     </div>
-  )
+  );
 }

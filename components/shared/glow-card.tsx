@@ -33,6 +33,11 @@ const variantStyles = {
     glow: "rgba(255, 215, 0, 0.4)",
     innerGlow: "rgba(255, 215, 0, 0.1)",
   },
+  primary: {
+    border: "rgba(0, 217, 255, 0.3)",
+    glow: "rgba(0, 217, 255, 0.4)",
+    innerGlow: "rgba(0, 217, 255, 0.1)",
+  },
 };
 
 export function GlowCard({
@@ -42,7 +47,7 @@ export function GlowCard({
   className,
   children,
 }: GlowCardProps) {
-  const styles = variantStyles[variant];
+  const styles = variantStyles[variant as keyof typeof variantStyles] || variantStyles.default;
   const customGlow = glowColor || styles.glow;
 
   return (
@@ -104,8 +109,8 @@ export function GlowCard({
         animate={
           animated
             ? {
-                backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
-              }
+              backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
+            }
             : undefined
         }
         transition={{
