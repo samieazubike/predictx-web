@@ -10,6 +10,8 @@ export default function HowItWorksPage() {
             <h1 className="font-display text-4xl font-black uppercase text-success text-glow-green">How It Works</h1>
           </div>
           <p className="text-muted-foreground text-lg">Everything you need to know about PredictX prediction markets</p>
+          <p className="text-muted-foreground text-lg">Everything you need to know about PredictX prediction markets</p>
+
         </div>
       </div>
 
