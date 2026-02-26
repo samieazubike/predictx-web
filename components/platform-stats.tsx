@@ -42,7 +42,7 @@ export function PlatformStats() {
                 <div className={`inline-flex p-2 rounded-lg bg-background mb-3 ${stat.glow}`}>
                   <stat.icon className={`h-6 w-6 ${stat.color}`} />
                 </div>
-                <div className={`text-3xl font-display font-black ${stat.color} mb-1`}>{stat.value}</div>
+                <div className={`text-2xl md:text-3xl font-display font-black ${stat.color} mb-1`}>{stat.value}</div>
                 <div className="text-sm text-muted-foreground uppercase tracking-wider">{stat.label}</div>
               </div>
             </div>

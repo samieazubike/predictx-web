@@ -37,16 +37,19 @@ export function MobileBottomNav() {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 w-full md:hidden z-50 bg-background/95 backdrop-blur-md border-t border-primary/30 flex justify-around items-center py-2">
+      <div
+        className="fixed bottom-0 left-0 w-full md:hidden z-50 bg-background/95 backdrop-blur-md border-t border-primary/30 flex justify-around items-center pt-2"
+        style={{ paddingBottom: `max(0.5rem, env(safe-area-inset-bottom))` }}
+      >
         {items.map((item) => {
           const Icon = item.icon
-          const active = pathname === item.href 
+          const active = pathname === item.href
 
           return (
             <Link
               key={item.label}
               href={item.href}
-              className="flex flex-col items-center justify-center flex-1 group"
+              className="flex flex-col items-center justify-center flex-1 min-h-[44px] min-w-[44px] touch-ripple group"
             >
               <Icon
                 className={`h-6 w-6 transition-all duration-300 ${
@@ -70,7 +73,7 @@ export function MobileBottomNav() {
 
         <button
           onClick={handleWalletClick}
-          className={`flex flex-col items-center flex-1 group ${
+          className={`flex flex-col items-center flex-1 min-h-[44px] min-w-[44px] touch-ripple group ${
             isConnected ? "text-primary" : ""
           }`}
         >

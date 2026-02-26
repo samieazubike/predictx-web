@@ -123,6 +123,7 @@ export function GamingInput({
             "flex-1 bg-transparent py-3 px-4 outline-none",
             "text-foreground placeholder:text-[var(--muted-foreground)]",
             "font-mono tabular-nums",
+            "min-h-[48px]",
             type === "number" && "text-right"
           )}
           style={{

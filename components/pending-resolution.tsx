@@ -41,13 +41,13 @@ export function PendingResolution() {
       {pendingPolls.map((poll) => (
         <div
           key={poll.id}
-          className="bg-surface border-2 border-border clip-corner-lg p-6 hover:border-gold transition-all"
+          className="bg-surface border-2 border-border clip-corner-lg p-4 md:p-6 hover:border-gold transition-all touch-ripple"
         >
           <div className="space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{poll.match}</div>
-                <h3 className="font-display text-xl font-bold text-foreground">{poll.question}</h3>
+                <h3 className="font-display text-lg md:text-xl font-bold text-foreground">{poll.question}</h3>
               </div>
               <div
                 className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider ${poll.status === "voting" ? "bg-primary/20 text-primary" : "bg-gold/20 text-gold"}`}
@@ -56,7 +56,7 @@ export function PendingResolution() {
               </div>
             </div>
 
-            <div className="flex items-center gap-6">
+            <div className="grid grid-cols-2 sm:flex sm:items-center gap-3 sm:gap-6">
               <div>
                 <div className="text-xs text-muted-foreground mb-1">Your Side</div>
                 <div

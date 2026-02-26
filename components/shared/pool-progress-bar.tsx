@@ -15,8 +15,8 @@ interface PoolProgressBarProps {
 const sizeClasses = {
   sm: {
     height: "h-2",
-    labelSize: "text-xs",
-    amountSize: "text-xs",
+    labelSize: "text-[10px] sm:text-xs",
+    amountSize: "text-[10px] sm:text-xs",
   },
   md: {
     height: "h-4",

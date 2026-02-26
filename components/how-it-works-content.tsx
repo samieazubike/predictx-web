@@ -86,7 +86,7 @@ export function HowItWorksContent() {
     <div className="space-y-16">
       {/* Steps Section */}
       <section>
-        <h2 className="font-display text-3xl font-black uppercase text-foreground mb-8 text-center">
+        <h2 className="font-display text-2xl md:text-3xl font-black uppercase text-foreground mb-8 text-center">
           Get Started in 5 Steps
         </h2>
         <div className="space-y-6">
@@ -104,7 +104,7 @@ export function HowItWorksContent() {
                 <div className="text-4xl font-display font-black text-muted opacity-20">{step.number}</div>
               </div>
               <div className="flex-1">
-                <h3 className={`font-display text-2xl font-bold ${step.color} mb-2`}>{step.title}</h3>
+                <h3 className={`font-display text-xl md:text-2xl font-bold ${step.color} mb-2`}>{step.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{step.description}</p>
               </div>
             </div>
@@ -114,7 +114,7 @@ export function HowItWorksContent() {
 
       {/* Example Calculation */}
       <section className="bg-gradient-to-br from-surface via-background-secondary to-surface border-2 border-primary/30 clip-corner-lg p-8">
-        <h2 className="font-display text-3xl font-black uppercase text-primary text-glow-cyan mb-8 text-center">
+        <h2 className="font-display text-2xl md:text-3xl font-black uppercase text-primary text-glow-cyan mb-8 text-center">
           Example Calculation
         </h2>
 
@@ -169,7 +169,7 @@ export function HowItWorksContent() {
 
       {/* Key Features */}
       <section>
-        <h2 className="font-display text-3xl font-black uppercase text-foreground mb-8 text-center">Key Features</h2>
+        <h2 className="font-display text-2xl md:text-3xl font-black uppercase text-foreground mb-8 text-center">Key Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {features.map((feature) => (
             <div
@@ -181,7 +181,7 @@ export function HowItWorksContent() {
                   <feature.icon className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-display text-xl font-bold text-foreground mb-2">{feature.title}</h3>
+                  <h3 className="font-display text-lg md:text-xl font-bold text-foreground mb-2">{feature.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
                 </div>
               </div>
@@ -192,7 +192,7 @@ export function HowItWorksContent() {
 
       {/* Resolution Process */}
       <section className="bg-surface border-2 border-border clip-corner-lg p-8">
-        <h2 className="font-display text-3xl font-black uppercase text-gold text-glow-gold mb-8 text-center">
+        <h2 className="font-display text-2xl md:text-3xl font-black uppercase text-gold text-glow-gold mb-8 text-center">
           Resolution Process
         </h2>
 
@@ -202,7 +202,7 @@ export function HowItWorksContent() {
               1
             </div>
             <div>
-              <h3 className="font-bold text-lg mb-2">Community Voting (2-hour window)</h3>
+              <h3 className="font-bold text-base md:text-lg mb-2">Community Voting (2-hour window)</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 After match ends, users who didn't participate vote on the outcome. Voters earn 0.5-1% of pool as
                 reward.
@@ -215,7 +215,7 @@ export function HowItWorksContent() {
               2
             </div>
             <div>
-              <h3 className="font-bold text-lg mb-2">Automatic Resolution (Above 85% consensus)</h3>
+              <h3 className="font-bold text-base md:text-lg mb-2">Automatic Resolution (Above 85% consensus)</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 If voting reaches over 85% consensus, the result is automatically approved and payouts are processed.
               </p>
@@ -227,7 +227,7 @@ export function HowItWorksContent() {
               3
             </div>
             <div>
-              <h3 className="font-bold text-lg mb-2">Admin Review (60-85% consensus)</h3>
+              <h3 className="font-bold text-base md:text-lg mb-2">Admin Review (60-85% consensus)</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 Moderately contentious results require admin verification with video evidence before finalization.
               </p>
@@ -239,7 +239,7 @@ export function HowItWorksContent() {
               4
             </div>
             <div>
-              <h3 className="font-bold text-lg mb-2">Multi-sig Review (Below 60% consensus)</h3>
+              <h3 className="font-bold text-base md:text-lg mb-2">Multi-sig Review (Below 60% consensus)</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 Highly contentious results require 3-admin multi-signature verification with comprehensive evidence.
               </p>
@@ -251,7 +251,7 @@ export function HowItWorksContent() {
               5
             </div>
             <div>
-              <h3 className="font-bold text-lg mb-2">Dispute Window (24 hours)</h3>
+              <h3 className="font-bold text-base md:text-lg mb-2">Dispute Window (24 hours)</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 After resolution, there's a 24-hour challenge period where users can dispute with evidence before
                 payouts are final.
@@ -263,7 +263,7 @@ export function HowItWorksContent() {
 
       {/* FAQ */}
       <section>
-        <h2 className="font-display text-3xl font-black uppercase text-foreground mb-8 text-center">
+        <h2 className="font-display text-2xl md:text-3xl font-black uppercase text-foreground mb-8 text-center">
           Frequently Asked Questions
         </h2>
 
@@ -290,8 +290,8 @@ export function HowItWorksContent() {
               a: "All stakes are returned in full with no fees if a match is officially cancelled before completion.",
             },
           ].map((faq, index) => (
-            <div key={index} className="bg-surface border border-border clip-corner p-6">
-              <h3 className="font-bold text-lg text-primary mb-2">{faq.q}</h3>
+            <div key={index} className="bg-surface border border-border clip-corner p-4 md:p-6 touch-ripple">
+              <h3 className="font-bold text-base md:text-lg text-primary mb-2">{faq.q}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{faq.a}</p>
             </div>
           ))}

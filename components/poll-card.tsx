@@ -44,7 +44,7 @@ export function PollCard({ poll, matchId, matchName = "" }: PollCardProps) {
       >
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
 
-        <div className="relative p-6">
+        <div className="relative p-4 md:p-6">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Left: Question & Info */}
             <div className="flex-1 space-y-4">
@@ -53,7 +53,7 @@ export function PollCard({ poll, matchId, matchName = "" }: PollCardProps) {
                   <div className="inline-block px-2 py-1 bg-primary/20 text-primary text-xs font-bold uppercase tracking-wider rounded mb-2">
                     {poll.category.replace("_", " ")}
                   </div>
-                  <h3 className="font-display text-2xl font-bold text-foreground text-balance">{poll.question}</h3>
+                  <h3 className="font-display text-lg md:text-xl lg:text-2xl font-bold text-foreground text-balance">{poll.question}</h3>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-background rounded text-xs font-mono font-bold text-primary whitespace-nowrap">
                   <Clock className="h-4 w-4" />
@@ -112,7 +112,7 @@ export function PollCard({ poll, matchId, matchName = "" }: PollCardProps) {
             </div>
 
             {/* Right: Stake Buttons */}
-            <div className="flex lg:flex-col gap-3 min-w-[200px]">
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 sm:min-w-0 lg:min-w-[200px]">
               {isActive ? (
                 <>
                   <GamingButton

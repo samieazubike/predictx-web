@@ -17,7 +17,7 @@ export function Hero() {
         <div className="particle particle-3" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 py-24 sm:py-32 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:py-24 lg:py-32 lg:px-8">
         <div className="text-center">
           {/* Energy badge */}
           <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full border border-primary/30 bg-surface/50 backdrop-blur-sm animate-pulse-glow">
@@ -25,13 +25,13 @@ export function Hero() {
             <span className="text-sm font-bold text-gold uppercase tracking-wider">Live Prediction Markets</span>
           </div>
 
-          <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tight mb-6">
+          <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-black uppercase tracking-tight mb-6">
             <span className="text-glow-cyan text-primary">Predict.</span>{" "}
             <span className="text-glow-green text-success">Stake.</span>{" "}
             <span className="text-glow-gold text-gold">Win.</span>
           </h1>
 
-          <p className="mx-auto max-w-2xl text-lg sm:text-xl text-muted-foreground leading-relaxed mb-10">
+          <p className="mx-auto max-w-2xl text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed mb-10">
             Community-driven football prediction markets powered by blockchain. Stake on match events, vote on outcomes,
             and earn proportional rewards from the pool.
           </p>
@@ -58,17 +58,17 @@ export function Hero() {
           </div>
 
           {/* Live stats ticker */}
-          <div className="mt-16 flex flex-wrap justify-center gap-8 text-center">
+          <div className="mt-12 sm:mt-16 flex flex-wrap justify-center gap-4 sm:gap-8 text-center">
             <div className="px-4">
-              <div className="text-3xl font-display font-black text-primary text-glow-cyan counter">234</div>
+              <div className="text-2xl md:text-3xl font-display font-black text-primary text-glow-cyan counter">234</div>
               <div className="text-sm text-muted-foreground uppercase tracking-wider">Active Polls</div>
             </div>
             <div className="px-4">
-              <div className="text-3xl font-display font-black text-success text-glow-green counter">$847K</div>
+              <div className="text-2xl md:text-3xl font-display font-black text-success text-glow-green counter">$847K</div>
               <div className="text-sm text-muted-foreground uppercase tracking-wider">Total Locked</div>
             </div>
             <div className="px-4">
-              <div className="text-3xl font-display font-black text-gold text-glow-gold counter">12.8K</div>
+              <div className="text-2xl md:text-3xl font-display font-black text-gold text-glow-gold counter">12.8K</div>
               <div className="text-sm text-muted-foreground uppercase tracking-wider">Community</div>
             </div>
           </div>

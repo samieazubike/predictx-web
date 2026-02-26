@@ -46,15 +46,15 @@ export function WalletConnectModal({ open, onClose }: WalletConnectModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-surface border-2 border-primary/30 max-w-md clip-corner-lg">
+      <DialogContent className="bg-surface border-2 border-primary/30 max-w-[calc(100%-1rem)] sm:max-w-md clip-corner-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="
-            text-2xl
+            text-lg md:text-xl lg:text-2xl
             font-display
             text-primary
             text-glow-cyan
             uppercase
-            tracking-wider
+            tracking-wider mt-2 text-center
           ">
             Connect Stellar Wallet
           </DialogTitle>

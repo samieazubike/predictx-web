@@ -180,7 +180,7 @@ export function PollCard({
         {/* Holographic shimmer on hover */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/8 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 pointer-events-none" />
 
-        <div className="relative p-5 space-y-4">
+        <div className="relative p-4 md:p-5 space-y-4">
           {/* Match context */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
@@ -252,7 +252,7 @@ export function PollCard({
           <Button
             onClick={handleStakeClick}
             className={[
-              "w-full h-10 font-bold uppercase tracking-wider text-sm",
+              "w-full h-11 font-bold uppercase tracking-wider text-sm",
               "bg-primary hover:bg-primary/90 text-background",
               "glow-cyan hover:shadow-[0_0_25px_rgba(0,217,255,0.5)]",
               "transition-all hover:scale-[1.02]",

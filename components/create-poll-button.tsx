@@ -14,22 +14,19 @@ export function CreatePollButton({ matchId, label = "Create a Prediction" }: Cre
   const [open, setOpen] = useState(false)
 
   return (
-    <>
-      <GamingButton
-        variant="gold"
-        size="md"
-        onClick={() => setOpen(true)}
-      >
-        <Plus className="mr-2 h-4 w-4" />
-        {label}
-      </GamingButton>
-
-      <CreatePollModal
-        open={open}
-        onClose={() => setOpen(false)}
-        preselectedMatchId={matchId}
-      />
-    </>
+    <GamingButton
+      variant="gold"
+      size="md"
+      fullWidth
+      className="sm:w-auto"
+      onClick={() => {
+        // TODO: Open CreatePollModal with match pre-selected
+        alert("Create Poll feature coming soon!")
+      }}
+    >
+      <Plus className="mr-2 h-4 w-4" />
+      Create a Prediction
+    </GamingButton>
   )
 }
 

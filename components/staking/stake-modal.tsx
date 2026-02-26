@@ -619,10 +619,11 @@ export function StakeModal({
               "fixed z-50 top-0 right-0 h-full",
               "w-full md:w-[520px] lg:w-[560px]",
               "bg-[#0e1230]/95 backdrop-blur-lg",
-              "border-l border-[var(--accent-cyan)]/20",
+              "border-l-0 md:border-l md:border-[var(--accent-cyan)]/20",
               "overflow-y-auto overscroll-contain",
               "flex flex-col",
             )}
+            style={{ paddingBottom: `env(safe-area-inset-bottom)` }}
             initial={{ x: "100%", filter: "blur(8px)" }}
             animate={{ x: 0, filter: "blur(0px)" }}
             exit={{ x: "100%", filter: "blur(8px)" }}

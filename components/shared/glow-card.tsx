@@ -57,6 +57,7 @@ export function GlowCard({
           "polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px)",
       }}
       whileHover={animated ? { scale: 1.02 } : undefined}
+      whileTap={animated ? { scale: 0.98 } : undefined}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
     >
       {/* Outer border layer */}
@@ -159,7 +160,7 @@ export function GlowCard({
       />
 
       {/* Content */}
-      <div className="relative z-20 p-6">{children}</div>
+      <div className="relative z-20 p-4 md:p-6">{children}</div>
     </motion.div>
   );
 }

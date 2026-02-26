@@ -95,18 +95,18 @@ export function CompletedPredictions() {
         <div className="bg-surface border border-border clip-corner p-4">
           <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total P/L</div>
           <div
-            className={`font-display text-2xl font-black ${totalProfit > 0 ? "text-success" : "text-accent"} ${totalProfit > 0 ? "text-glow-green" : ""}`}
+            className={`font-display text-xl md:text-2xl font-black ${totalProfit > 0 ? "text-success" : "text-accent"} ${totalProfit > 0 ? "text-glow-green" : ""}`}
           >
             {totalProfit > 0 ? "+" : ""}${totalProfit.toFixed(0)}
           </div>
         </div>
         <div className="bg-surface border border-border clip-corner p-4">
           <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Win Rate</div>
-          <div className="font-display text-2xl font-black text-primary text-glow-cyan">{winRate.toFixed(0)}%</div>
+          <div className="font-display text-xl md:text-2xl font-black text-primary text-glow-cyan">{winRate.toFixed(0)}%</div>
         </div>
         <div className="bg-surface border border-border clip-corner p-4">
           <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total ROI</div>
-          <div className={`font-display text-2xl font-black ${totalProfit > 0 ? "text-success" : "text-accent"}`}>
+          <div className={`font-display text-xl md:text-2xl font-black ${totalProfit > 0 ? "text-success" : "text-accent"}`}>
             {((totalProfit / totalStaked) * 100).toFixed(0)}%
           </div>
         </div>
@@ -143,7 +143,7 @@ export function CompletedPredictions() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
               <div>
                 <div className="text-xs text-muted-foreground mb-1">Your Side</div>
                 <div

@@ -73,7 +73,7 @@ export function WalletButton() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-56 max-w-[90vw]">
         <DropdownMenuItem onClick={copy}>
           <Copy className="mr-2 h-4 w-4" />
           Copy Address

@@ -75,7 +75,7 @@ export function MatchStatsBar({
                   value={s.value}
                   prefix={s.prefix}
                   format={s.format}
-                  className={`text-xl font-bold ${s.textClass}`}
+                  className={`text-base sm:text-lg md:text-xl font-bold ${s.textClass}`}
                 />
                 <span className="text-xs text-muted-foreground">{s.suffix}</span>
               </div>

@@ -42,6 +42,7 @@ export function GamingTabs({
       className={cn(
         "relative flex items-center gap-1 p-1",
         "bg-[#1a1f3a]/50 rounded-lg",
+        "overflow-x-auto scrollbar-hide snap-x snap-mandatory",
         className
       )}
       style={{
@@ -90,6 +91,7 @@ export function GamingTabs({
           className={cn(
             "relative px-4 py-2 text-sm font-medium transition-colors duration-200",
             "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-cyan)]/50 rounded-md",
+            "snap-start shrink-0 min-h-[44px]",
             activeTab === tab.key
               ? "text-[var(--accent-cyan)]"
               : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"

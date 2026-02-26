@@ -71,12 +71,12 @@ export default function MatchPage() {
       </div>
       {/* Content */}
       <div className="mx-auto max-w-7xl px-4 pb-16 lg:px-8 space-y-8">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
-            <h2 className="font-display text-2xl font-black uppercase text-primary text-glow-cyan mb-2">
+            <h2 className="font-display text-xl md:text-2xl font-black uppercase text-primary text-glow-cyan mb-2">
               Active Prediction Markets
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               Choose a poll and stake on the outcome you believe will happen
             </p>
           </div>

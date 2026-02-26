@@ -124,7 +124,7 @@ export function MatchHeader({ match }: MatchHeaderProps) {
           </div>
 
           {/* Teams + VS / Score */}
-          <div className="grid grid-cols-[1fr_auto_1fr] gap-4 sm:gap-8 items-center mb-8">
+          <div className="flex flex-col items-center gap-6 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:gap-8 sm:items-center mb-8">
             {/* Home Team */}
             <motion.div
               className="flex flex-col items-center lg:items-end gap-3"

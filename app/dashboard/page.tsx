@@ -7,9 +7,9 @@ export default function DashboardPage() {
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-1 h-10 bg-primary glow-cyan" />
-            <h1 className="font-display text-4xl font-black uppercase text-primary text-glow-cyan">My Predictions</h1>
+            <h1 className="font-display text-2xl md:text-3xl lg:text-4xl font-black uppercase text-primary text-glow-cyan">My Predictions</h1>
           </div>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-sm md:text-base lg:text-lg">
             Track your active stakes, pending resolutions, and voting opportunities
           </p>
         </div>

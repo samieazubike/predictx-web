@@ -61,7 +61,7 @@ export function ActiveStakes() {
         return (
           <div
             key={stake.id}
-            className="bg-surface border-2 border-border clip-corner-lg p-6 hover:border-primary transition-all"
+            className="bg-surface border-2 border-border clip-corner-lg p-4 md:p-6 hover:border-primary transition-all touch-ripple"
           >
             <div className="flex flex-col lg:flex-row gap-6">
               {/* Left: Poll Info */}
@@ -78,7 +78,7 @@ export function ActiveStakes() {
                 </div>
 
                 {/* Your Position */}
-                <div className="flex items-center gap-6">
+                <div className="grid grid-cols-2 md:flex md:items-center gap-4 md:gap-6">
                   <div>
                     <div className="text-xs text-muted-foreground mb-1">Your Side</div>
                     <div

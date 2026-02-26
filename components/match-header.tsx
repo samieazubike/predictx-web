@@ -31,11 +31,11 @@ export function MatchHeader({ matchId }: MatchHeaderProps) {
           <span className="text-sm font-bold text-gold uppercase tracking-wider">{match.league}</span>
         </div>
 
-        <div className="grid lg:grid-cols-[1fr_auto_1fr] gap-8 items-center mb-8">
+        <div className="flex flex-col items-center gap-6 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:gap-8 sm:items-center mb-8">
           {/* Home Team */}
-          <div className="text-center lg:text-right">
-            <div className="inline-block px-6 py-3 bg-surface clip-corner-lg border border-primary/30 mb-3">
-              <h1 className="font-display text-4xl sm:text-5xl font-black uppercase text-primary text-glow-cyan">
+          <div className="text-center sm:text-right">
+            <div className="inline-block px-4 py-2 sm:px-6 sm:py-3 bg-surface clip-corner-lg border border-primary/30 mb-3">
+              <h1 className="font-display text-xl sm:text-2xl lg:text-5xl font-black uppercase text-primary text-glow-cyan">
                 {match.homeTeam}
               </h1>
             </div>
@@ -45,16 +45,16 @@ export function MatchHeader({ matchId }: MatchHeaderProps) {
           {/* VS Badge */}
           <div className="flex justify-center">
             <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-surface border-4 border-primary flex items-center justify-center glow-cyan">
-                <span className="font-display text-3xl font-black text-primary">VS</span>
+              <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full bg-surface border-4 border-primary flex items-center justify-center glow-cyan">
+                <span className="font-display text-lg sm:text-xl lg:text-3xl font-black text-primary">VS</span>
               </div>
             </div>
           </div>
 
           {/* Away Team */}
-          <div className="text-center lg:text-left">
-            <div className="inline-block px-6 py-3 bg-surface clip-corner-lg border border-primary/30 mb-3">
-              <h1 className="font-display text-4xl sm:text-5xl font-black uppercase text-primary text-glow-cyan">
+          <div className="text-center sm:text-left">
+            <div className="inline-block px-4 py-2 sm:px-6 sm:py-3 bg-surface clip-corner-lg border border-primary/30 mb-3">
+              <h1 className="font-display text-xl sm:text-2xl lg:text-5xl font-black uppercase text-primary text-glow-cyan">
                 {match.awayTeam}
               </h1>
             </div>
@@ -63,7 +63,7 @@ export function MatchHeader({ matchId }: MatchHeaderProps) {
         </div>
 
         {/* Match Info */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex items-center gap-3 px-4 py-3 bg-surface rounded clip-corner border border-border">
             <Calendar className="h-5 w-5 text-primary" />
             <div>

@@ -206,10 +206,10 @@ export function PollsList({ polls, match }: PollsListProps) {
         </div>
 
         {/* Sort dropdown */}
-        <div className="relative shrink-0">
+        <div className="relative shrink-0 w-full sm:w-auto">
           <button
             onClick={() => setSortOpen(!sortOpen)}
-            className="flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded clip-corner text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
+            className="flex items-center justify-between sm:justify-start gap-2 px-4 py-2 bg-surface border border-border rounded clip-corner text-sm font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors w-full sm:w-auto min-h-[44px]"
           >
             {SORT_OPTIONS.find((s) => s.key === sortBy)?.label}
             <ChevronDown

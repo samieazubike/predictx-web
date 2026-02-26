@@ -16,7 +16,7 @@ export function TrendingPolls() {
         <div className="text-center mb-10 space-y-4">
           <div className="flex items-center justify-center gap-3">
             <Flame className="h-7 w-7 text-gold text-glow-gold animate-pulse" />
-            <h2 className="font-display text-3xl md:text-4xl font-black uppercase tracking-wider text-foreground">
+            <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-wider text-foreground">
               Trending Predictions
             </h2>
             <Flame className="h-7 w-7 text-gold text-glow-gold animate-pulse" />

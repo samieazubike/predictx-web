@@ -68,9 +68,9 @@ function TimeUnit({
   isTicking: boolean;
 }) {
   const sizeClasses = {
-    sm: "text-2xl min-w-[2ch]",
-    md: "text-4xl min-w-[2.5ch]",
-    lg: "text-6xl min-w-[2ch]",
+    sm: "text-lg sm:text-2xl min-w-[2ch]",
+    md: "text-2xl sm:text-4xl min-w-[2.5ch]",
+    lg: "text-3xl sm:text-5xl lg:text-6xl min-w-[2ch]",
   };
 
   const labelClasses = {

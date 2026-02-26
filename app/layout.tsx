@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Orbitron, Barlow, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
@@ -29,6 +29,12 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-mono",
 })
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+}
 
 export const metadata: Metadata = {
   title: "PredictX - Web3 Football Prediction Markets",
@@ -66,10 +72,10 @@ export default function RootLayout({
           minHeight: "100vh",
         }}>
        
-        <div className="md:pt-16 pb-16 md:pb-0">
-       <Header />
+        <Header />
+        <div className="pt-16 pb-20 md:pb-0">
+          {children}
         </div>
-        {children}
         <Toaster theme="dark" position="bottom-right" />
         <Analytics />
         <MobileBottomNav />

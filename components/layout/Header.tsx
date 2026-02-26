@@ -64,10 +64,12 @@ export function Header() {
 
           <div className="flex gap-4 items-center">
 
-            <WalletButton />
+            <div className="hidden md:block">
+              <WalletButton />
+            </div>
 
             <Button
-              className="md:hidden"
+              className="md:hidden min-h-[44px] min-w-[44px]"
               onClick={() => setMobileMenuOpen(true)}
             >
               <Menu />
@@ -83,7 +85,7 @@ export function Header() {
         <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
 
           <Button
-            className="absolute top-6 right-6"
+            className="absolute top-6 right-6 min-h-[44px] min-w-[44px]"
             onClick={() => setMobileMenuOpen(false)}
           >
             <X />
@@ -96,7 +98,7 @@ export function Header() {
               key={item.name}
               href={item.href}
               onClick={() => setMobileMenuOpen(false)}
-              className="text-2xl py-4"
+              className="text-2xl py-4 px-8 min-h-[44px] touch-ripple"
             >
               {item.name}
             </Link>

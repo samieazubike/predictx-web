@@ -77,7 +77,7 @@ export function VotingOpportunities() {
         return (
           <div
             key={poll.id}
-            className="bg-surface border-2 border-border clip-corner-lg p-6 hover:border-gold transition-all"
+            className="bg-surface border-2 border-border clip-corner-lg p-4 md:p-6 hover:border-gold transition-all touch-ripple"
           >
             <div className="flex flex-col lg:flex-row gap-6">
               {/* Left: Poll Info */}
@@ -87,13 +87,13 @@ export function VotingOpportunities() {
                     <div className="text-xs text-muted-foreground uppercase tracking-wider">{poll.match}</div>
                     <div className="text-sm font-mono font-bold text-primary">{poll.finalScore}</div>
                   </div>
-                  <h3 className="font-display text-xl font-bold text-foreground mb-2">{poll.question}</h3>
+                  <h3 className="font-display text-lg md:text-xl font-bold text-foreground mb-2">{poll.question}</h3>
                 </div>
 
                 {/* Evidence */}
-                <div className="p-4 bg-background rounded border border-primary/30">
-                  <div className="text-xs text-gold font-bold uppercase tracking-wider mb-2">Evidence</div>
-                  <p className="text-sm text-muted-foreground">{poll.evidence}</p>
+                <div className="p-3 md:p-4 bg-background rounded border border-primary/30">
+                  <div className="text-xs text-gold font-bold uppercase tracking-wider mb-1 md:mb-2">Evidence</div>
+                  <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 md:line-clamp-none">{poll.evidence}</p>
                 </div>
 
                 {/* Reward */}
@@ -112,7 +112,7 @@ export function VotingOpportunities() {
 
               {/* Right: Voting Buttons */}
               {!hasVoted && (
-                <div className="flex lg:flex-col gap-3 min-w-[200px]">
+                <div className="flex flex-col sm:flex-row lg:flex-col gap-3 sm:min-w-0 lg:min-w-[200px]">
                   <Button
                     onClick={() => handleVote(poll.id, "yes", poll.reward)}
                     className="flex-1 bg-success hover:bg-success/90 text-background font-bold uppercase tracking-wider glow-green h-12"

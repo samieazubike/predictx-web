@@ -76,22 +76,22 @@ const matches = [
 export function UpcomingMatches() {
   return (
     <div id="matches" className="bg-background-secondary py-16 border-t border-primary/20">
-      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+      <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-8">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-1 h-8 bg-success glow-green" />
-          <h2 className="font-display text-3xl font-black uppercase text-success text-glow-green">Upcoming Matches</h2>
+          <h2 className="font-display text-2xl md:text-3xl font-black uppercase text-success text-glow-green">Upcoming Matches</h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {matches.map((match) => (
             <div
               key={match.id}
-              className="bg-surface border border-border clip-corner-lg hover:border-primary transition-all group relative overflow-hidden"
+              className="bg-surface border border-border clip-corner-lg hover:border-primary transition-all group relative overflow-hidden touch-ripple"
             >
               {/* Holographic shine effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
 
-              <div className="relative p-6 space-y-4">
+              <div className="relative p-4 md:p-6 space-y-4">
                 {/* League badge */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 px-3 py-1 bg-background rounded clip-corner">
@@ -105,19 +105,19 @@ export function UpcomingMatches() {
 
                 {/* Match teams */}
                 <div className="flex items-center justify-between py-4">
-                  <div className="flex-1 text-center">
-                    <div className="text-2xl font-display font-black text-foreground uppercase">{match.homeTeam}</div>
+                  <div className="flex-1 min-w-0 text-center">
+                    <div className="text-sm sm:text-lg md:text-2xl font-display font-black text-foreground uppercase truncate">{match.homeTeam}</div>
                   </div>
-                  <div className="px-6">
-                    <div className="text-4xl font-display font-black text-muted-foreground">VS</div>
+                  <div className="px-2 sm:px-4 md:px-6 shrink-0">
+                    <div className="text-xl sm:text-2xl md:text-4xl font-display font-black text-muted-foreground">VS</div>
                   </div>
-                  <div className="flex-1 text-center">
-                    <div className="text-2xl font-display font-black text-foreground uppercase">{match.awayTeam}</div>
+                  <div className="flex-1 min-w-0 text-center">
+                    <div className="text-sm sm:text-lg md:text-2xl font-display font-black text-foreground uppercase truncate">{match.awayTeam}</div>
                   </div>
                 </div>
 
                 {/* Match details */}
-                <div className="grid grid-cols-2 gap-4 py-3 border-y border-border">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-3 border-y border-border">
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-primary" />
                     <span className="text-muted-foreground">{match.date}</span>
@@ -134,13 +134,13 @@ export function UpcomingMatches() {
                   <div className="space-y-1">
                     <div className="text-xs text-muted-foreground uppercase tracking-wider">Available Polls</div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-display font-black text-primary">{match.polls}</span>
+                      <span className="text-lg md:text-2xl font-display font-black text-primary">{match.polls}</span>
                       <span className="text-sm text-muted-foreground">predictions</span>
                     </div>
                   </div>
                   <div className="space-y-1 text-right">
                     <div className="text-xs text-muted-foreground uppercase tracking-wider">Total Pool</div>
-                    <div className="text-2xl font-display font-black text-gold text-glow-gold">
+                    <div className="text-lg md:text-2xl font-display font-black text-gold text-glow-gold">
                       ${match.totalPool.toLocaleString()}
                     </div>
                   </div>

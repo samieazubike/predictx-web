@@ -14,11 +14,16 @@ export interface Team {
 
 interface TeamBadgeProps {
   team: Team;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   className?: string;
 }
 
 const sizeClasses = {
+  xs: {
+    container: "w-8 h-9",
+    text: "text-[10px]",
+    glow: "0 0 8px",
+  },
   sm: {
     container: "w-10 h-11",
     text: "text-xs",
