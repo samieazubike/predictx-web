@@ -1,4 +1,4 @@
-import { Hero } from "@/components/hero"
+import { Hero } from "@/components/home/hero"
 import { PlatformStats } from "@/components/platform-stats"
 import { TrendingPolls } from "@/components/home/trending-polls"
 import { UpcomingMatches } from "@/components/home/upcoming-matches"
