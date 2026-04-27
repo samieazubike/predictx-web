@@ -82,3 +82,5 @@ export default function RootLayout({
     </html>
   )
 }
+  /* Bounty contribution */
+}
