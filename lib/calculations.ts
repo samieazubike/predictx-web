@@ -56,6 +56,17 @@ export function formatAddress(addr: string): string {
 	return addr.length < 8 ? addr : `${addr.slice(0, 4)}...${addr.slice(-4)}`;
 }
 
-export function formatXLM(amount: number): string {
-	return `${new Intl.NumberFormat("en-US").format(Math.round(amount))} XLM`;
+export function formatXLM(amount: number, maxDecimals: number = 4): string {
+	if (amount === 0) return "0 XLM";
+
+	if (Number.isInteger(amount)) {
+		return `${new Intl.NumberFormat("en-US").format(amount)} XLM`;
+	}
+
+	const formatted = new Intl.NumberFormat("en-US", {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: maxDecimals,
+	}).format(amount);
+
+	return `${formatted} XLM`;
 }
