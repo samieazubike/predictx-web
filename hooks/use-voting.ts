@@ -5,6 +5,7 @@ import { persist } from "zustand/middleware";
 import { STORAGE_KEYS, type Poll } from "@/lib/mock-data";
 import { useMockData } from "@/hooks/use-mock-data";
 import { useStaking } from "@/hooks/use-staking";
+import { trackEvent } from "@/lib/analytics";
 
 export type VoteDecision = "yes" | "no" | "unclear";
 
@@ -56,6 +57,15 @@ export const useVoting = create<VotingState>()(
           userVotes: { ...state.userVotes, [pollId]: decision },
           userEarnings: state.userEarnings + reward,
         }));
+
+        // Analytics — no wallet addresses
+        const poll = useMockData.getState().getPoll(pollId);
+        trackEvent({
+          name: "vote_cast",
+          pollCategory: poll?.category ?? "other",
+          matchId: poll?.matchId ?? "unknown",
+          decision,
+        });
       },
 
       getAccuracy: () => {

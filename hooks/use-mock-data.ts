@@ -11,6 +11,7 @@ import {
   type Poll,
   type PlatformStats,
 } from "@/lib/mock-data";
+import { trackEvent } from "@/lib/analytics";
 
 interface MockDataState {
   matches: Match[];
@@ -58,7 +59,14 @@ export const useMockData = create<MockDataState>()(
         })),
 
       /** Prepend a newly-created poll so it appears immediately in all views. */
-      addPoll: (poll) => set((s) => ({ polls: [poll, ...s.polls] })),
+      addPoll: (poll) => {
+        set((s) => ({ polls: [poll, ...s.polls] }));
+        trackEvent({
+          name: "poll_create",
+          pollCategory: poll.category,
+          matchId: poll.matchId,
+        });
+      },
     }),
     { name: STORAGE_KEYS.pools },
   ),

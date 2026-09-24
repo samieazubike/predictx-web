@@ -10,6 +10,7 @@ import {
 } from "@/lib/constants";
 import { formatAddress } from "@/lib/calculations";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 
 export interface ConnectPayload {
   address: string;
@@ -111,6 +112,9 @@ export const useWallet = create<WalletState>()(
             address: publicKey,
             balance,
           });
+
+          // Analytics — no public key in the payload
+          trackEvent({ name: "wallet_connect" });
         } catch (error) {
           console.error("Freighter connect error:", error);
           throw error;
