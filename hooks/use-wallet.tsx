@@ -10,6 +10,7 @@ import {
 } from "@/lib/constants";
 import { formatAddress } from "@/lib/calculations";
 import { toast } from "sonner";
+import { analytics } from "@/lib/analytics";
 
 export interface ConnectPayload {
   address: string;
@@ -111,6 +112,8 @@ export const useWallet = create<WalletState>()(
             address: publicKey,
             balance,
           });
+
+          analytics.trackWalletConnect(publicKey, currentNetwork);
         } catch (error) {
           console.error("Freighter connect error:", error);
           throw error;
@@ -119,13 +122,15 @@ export const useWallet = create<WalletState>()(
         }
       },
 
-      disconnect: () =>
+      disconnect: () => {
+        analytics.trackWalletDisconnect();
         set({
           isConnected: false,
           address: "",
           balance: 0,
           isConnecting: false,
-        }),
+        });
+      },
 
       switchNetwork: async (network: StellarNetwork) => {
         const { address, isConnected } = get();
