@@ -16,6 +16,7 @@ import {
   SIMULATION_MODE,
   type StellarNetwork,
 } from "@/lib/stellar";
+import { invalidatePool, invalidateStats } from "@/hooks/use-chain-data";
 
 // ── Transaction state types ────────────────────────────────────────────────
 
@@ -146,7 +147,11 @@ export const useStaking = create<StakingState>()(
         // 2. Optimistically update pool in mock data store
         useMockData.getState().updatePollPool(pollId, side, amount);
 
-        // 3. Post-confirmation: try to refresh on-chain pool info
+        // 3. Invalidate query cache so usePool / useStats refetch
+        invalidatePool(pollId);
+        invalidateStats();
+
+        // 4. Post-confirmation: try to refresh on-chain pool info
         if (!SIMULATION_MODE) {
           await get().refreshPoolInfo(pollId);
         }

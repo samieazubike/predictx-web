@@ -311,6 +311,10 @@ export function CreatePollModal({ open, onClose, preselectedMatchId }: CreatePol
             };
 
             addPoll(newPoll);
+            // Invalidate poll list cache so usePollList refetches
+            const { invalidatePollList, invalidateStats } = await import("@/hooks/use-chain-data");
+            invalidatePollList();
+            invalidateStats();
             setSuccess(true);
 
             toast.success("POLL CREATED! 🎉", {
