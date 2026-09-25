@@ -5,6 +5,7 @@ import { Clock, Users, Info, Lock } from "lucide-react"
 import { GamingButton } from "@/components/shared"
 import { StakeModal } from "@/components/staking"
 import type { Poll } from "@/lib/mock-data"
+import { categoryLabel } from "@/lib/utils"
 
 interface PollCardProps {
   poll: Poll & { timeLeft?: string }
@@ -51,7 +52,7 @@ export function PollCard({ poll, matchId, matchName = "" }: PollCardProps) {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="inline-block px-2 py-1 bg-primary/20 text-primary text-xs font-bold uppercase tracking-wider rounded mb-2">
-                    {poll.category.replace("_", " ")}
+                    {categoryLabel(poll.category)}
                   </div>
                   <h3 className="font-display text-2xl font-bold text-foreground text-balance">{poll.question}</h3>
                 </div>
