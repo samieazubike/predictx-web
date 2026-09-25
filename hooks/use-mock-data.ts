@@ -44,18 +44,35 @@ export const useMockData = create<MockDataState>()(
           .slice(0, 6),
 
       updatePollPool: (pollId, side, amount) =>
-        set((s) => ({
-          polls: s.polls.map((p) =>
-            p.id !== pollId
-              ? p
-              : {
-                  ...p,
-                  yesPool: side === "yes" ? p.yesPool + amount : p.yesPool,
-                  noPool: side === "no" ? p.noPool + amount : p.noPool,
-                  participants: p.participants + 1,
-                },
-          ),
-        })),
+        set((s) => {
+          const poll = s.polls.find((p) => p.id === pollId);
+
+          if (!poll) {
+            // Surfaced in development so numeric/legacy poll IDs from the old
+            // hardcoded polls-list are caught immediately instead of silently
+            // leaving every pool frozen.
+            if (process.env.NODE_ENV !== "production") {
+              console.warn(
+                `[updatePollPool] Poll not found: "${pollId}". ` +
+                  `No pool was updated. Available IDs: ${s.polls.map((p) => p.id).join(", ")}`,
+              );
+            }
+            return s; // leave state unchanged — no silent no-op
+          }
+
+          return {
+            polls: s.polls.map((p) =>
+              p.id !== pollId
+                ? p
+                : {
+                    ...p,
+                    yesPool: side === "yes" ? p.yesPool + amount : p.yesPool,
+                    noPool: side === "no" ? p.noPool + amount : p.noPool,
+                    participants: p.participants + 1,
+                  },
+            ),
+          };
+        }),
 
       /** Prepend a newly-created poll so it appears immediately in all views. */
       addPoll: (poll) => set((s) => ({ polls: [poll, ...s.polls] })),
