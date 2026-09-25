@@ -26,6 +26,24 @@ interface VotingCardProps {
 
 type CardState = "idle" | "confirming" | "processing" | "voted";
 
+// Component to render vote tally with actual vote counts
+function VoteTallyComponent({ poll }: { poll: Poll }) {
+    const { getTally } = useVoting();
+    const tally = getTally(poll.id);
+    
+    return (
+        <div className="mb-6 p-4 rounded-lg bg-background/50 border border-border">
+            <h4 className="text-xs uppercase tracking-widest text-muted-foreground mb-4 font-bold">Community Tally</h4>
+            <VoteTally 
+                yesVotes={tally.yes} 
+                noVotes={tally.no} 
+                unclearVotes={tally.unclear} 
+                animated 
+            />
+        </div>
+    );
+}
+
 export function VotingCard({ poll, match }: VotingCardProps) {
     const [cardState, setCardState] = useState<CardState>("idle");
     const [selectedDecision, setSelectedDecision] = useState<VoteDecision | null>(null);
@@ -151,10 +169,8 @@ export function VotingCard({ poll, match }: VotingCardProps) {
             <EvidenceSection matchId={match.id} className="mb-8" />
 
             {/* Vote Tally */}
-            <div className="mb-6 p-4 rounded-lg bg-background/50 border border-border">
-                <h4 className="text-xs uppercase tracking-widest text-muted-foreground mb-4 font-bold">Community Tally</h4>
-                <VoteTally yesVotes={poll.yesPool} noVotes={poll.noPool} unclearVotes={Math.floor(poll.participants / 3)} animated />
-            </div>
+            <VoteTallyComponent poll={poll} />
+
 
             {/* Interaction Area */}
             <div className="relative min-h-[140px] flex flex-col justify-end">
