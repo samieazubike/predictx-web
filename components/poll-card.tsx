@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Clock, Users, Info, Lock } from "lucide-react"
+import { CheckCircle2, XCircle, Clock, Users, Info, Lock, Ban } from "lucide-react"
 import { GamingButton } from "@/components/shared"
 import { StakeModal } from "@/components/staking"
 import type { Poll } from "@/lib/mock-data"
@@ -22,6 +22,7 @@ export function PollCard({ poll, matchId, matchName = "" }: PollCardProps) {
 
   const isActive = !poll.status || poll.status === "active"
   const isResolved = poll.status === "resolved"
+  const isCancelled = poll.status === "cancelled"
   const isLocked = poll.status === "locked"
   const isVoting = poll.status === "voting"
 
@@ -39,7 +40,7 @@ export function PollCard({ poll, matchId, matchName = "" }: PollCardProps) {
           isActive
             ? "border-border hover:border-primary hover:translate-y-[-2px] hover:shadow-[0_0_30px_rgba(0,217,255,0.15)]"
             : "border-border/50",
-          (isLocked || isResolved) ? "opacity-75" : "",
+          (isLocked || isResolved || isCancelled) ? "opacity-75" : "",
         ].filter(Boolean).join(" ")}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
@@ -55,10 +56,29 @@ export function PollCard({ poll, matchId, matchName = "" }: PollCardProps) {
                   </div>
                   <h3 className="font-display text-2xl font-bold text-foreground text-balance">{poll.question}</h3>
                 </div>
+              {/* Show resolved/cancelled state instead of countdown timer */}
+              {isResolved ? (
+                <div
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded border text-xs font-mono font-bold whitespace-nowrap ${
+                    poll.outcome === "yes"
+                      ? "text-success bg-success/10 border-success/30"
+                      : "text-accent bg-accent/10 border-accent/30"
+                  }`}
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  {poll.outcome === "yes" ? "YES WON" : poll.outcome === "no" ? "NO WON" : "Resolved"}
+                </div>
+              ) : isCancelled ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded border text-xs font-mono font-bold whitespace-nowrap text-muted-foreground bg-surface border-border">
+                  <Ban className="h-4 w-4" />
+                  Cancelled
+                </div>
+              ) : (
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-background rounded text-xs font-mono font-bold text-primary whitespace-nowrap">
                   <Clock className="h-4 w-4" />
                   {poll.timeLeft ?? poll.lockTime}
                 </div>
+              )}
               </div>
 
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -143,11 +163,23 @@ export function PollCard({ poll, matchId, matchName = "" }: PollCardProps) {
                 </div>
               ) : isResolved && poll.outcome ? (
                 <div
-                  className={`flex items-center justify-center gap-2 py-4 font-bold uppercase tracking-wider text-sm ${
+                  className={`flex flex-col items-center justify-center gap-1 py-4 font-bold uppercase tracking-wider text-sm ${
                     poll.outcome === "yes" ? "text-success" : "text-accent"
                   }`}
                 >
-                  {poll.outcome === "yes" ? "YES WON ✓" : "NO WON ✓"}
+                  <CheckCircle2 className="h-5 w-5" />
+                  {poll.outcome === "yes" ? "YES WON" : "NO WON"}
+                  <span className="text-xs text-muted-foreground normal-case font-normal mt-0.5">
+                    Final pool: ${(poll.yesPool + poll.noPool).toLocaleString()}
+                  </span>
+                </div>
+              ) : isCancelled ? (
+                <div className="flex flex-col items-center justify-center gap-1 py-4 text-muted-foreground font-bold uppercase tracking-wider text-sm">
+                  <XCircle className="h-5 w-5" />
+                  Cancelled
+                  <span className="text-xs normal-case font-normal mt-0.5">
+                    Refund issued
+                  </span>
                 </div>
               ) : (
                 <GamingButton

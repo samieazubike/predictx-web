@@ -33,10 +33,9 @@ export function calculatePotentialWinnings(
 export function calculatePoolPercentages(yesPool: number, noPool: number) {
 	const total = yesPool + noPool;
 	if (!total) return { yes: 50, no: 50 };
-	return {
-		yes: Math.round((yesPool / total) * 100),
-		no: Math.round((noPool / total) * 100),
-	};
+	// Clamp so the pair always sums to 100
+	const yes = Math.round((yesPool / total) * 100);
+	return { yes, no: 100 - yes };
 }
 
 export function formatCurrency(amount: number): string {
@@ -58,4 +57,54 @@ export function formatAddress(addr: string): string {
 
 export function formatXLM(amount: number): string {
 	return `${new Intl.NumberFormat("en-US").format(Math.round(amount))} XLM`;
+}
+
+// ── Poll status helpers (Issue #65) ────────────────────────────────────────
+
+/** Returns true for any poll status that has a final, immutable outcome. */
+export function isPollTerminal(status: string): boolean {
+	return status === "resolved" || status === "cancelled";
+}
+
+/** Returns true only for resolved polls with a recorded outcome. */
+export function isPollResolved(status: string): boolean {
+	return status === "resolved";
+}
+
+/** Returns true for cancelled polls (emergency refund path). */
+export function isPollCancelled(status: string): boolean {
+	return status === "cancelled";
+}
+
+/**
+ * Returns the winning side of a resolved poll, or null when not yet resolved.
+ * Accepts the poll's `outcome` field directly.
+ */
+export function getWinningSide(outcome?: string | null): "yes" | "no" | null {
+	if (outcome === "yes" || outcome === "no") return outcome;
+	return null;
+}
+
+/**
+ * Returns a human-readable label for a poll status.
+ * Used in status badges on poll cards.
+ */
+export function getPollStatusLabel(status: string, outcome?: string | null): string {
+	switch (status) {
+		case "active":   return "Active";
+		case "locked":   return "Locked";
+		case "voting":   return "Voting";
+		case "admin-review":
+		case "admin_review": return "Admin Review";
+		case "multi-sig-review":
+		case "multi_sig_review": return "Multi-Sig Review";
+		case "dispute":  return "Disputed";
+		case "resolved": {
+			const winner = getWinningSide(outcome);
+			if (winner) return `${winner.toUpperCase()} Won`;
+			return "Resolved";
+		}
+		case "cancelled": return "Cancelled";
+		default:         return status;
+	}
 }
