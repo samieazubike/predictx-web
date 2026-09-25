@@ -113,7 +113,13 @@ export const useWallet = create<WalletState>()(
           });
         } catch (error) {
           console.error("Freighter connect error:", error);
-          throw error;
+          const message =
+            error instanceof Error
+              ? error.message
+              : typeof error === "string"
+                ? error
+                : "Failed to connect wallet";
+          toast.error(message);
         } finally {
           set({ isConnecting: false });
         }
