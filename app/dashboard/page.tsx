@@ -1,4 +1,4 @@
-import { DashboardTabs } from "@/components/dashboard-tabs"
+import { DashboardTabs } from "@/components/dashboard"
 
 export default function DashboardPage() {
   return (

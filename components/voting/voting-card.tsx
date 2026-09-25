@@ -18,6 +18,7 @@ import { type Poll, type Match } from "@/lib/mock-data";
 import { useVoting, type VoteDecision } from "@/hooks/use-voting";
 import { useWallet } from "@/hooks/use-wallet";
 import { cn } from "@/lib/utils";
+import { VOTING_WINDOW_HOURS } from "@/lib/constants";
 
 interface VotingCardProps {
     poll: Poll;
@@ -88,9 +89,9 @@ export function VotingCard({ poll, match }: VotingCardProps) {
         setSelectedDecision(null);
     };
 
-    // Compute deadline: voting is allowed 2 hours after match lockTime (we use kickoff for demo purposes)
-    // Real implementation would calculate properly. Let's add 2 hours to kickoff for mock.
-    const lockTarget = new Date(match.kickoff).getTime() + 2 * 60 * 60 * 1000;
+    // Compute deadline: voting is allowed VOTING_WINDOW_HOURS after match lockTime (we use kickoff for demo purposes)
+    // Real implementation would calculate properly.
+    const lockTarget = new Date(match.kickoff).getTime() + VOTING_WINDOW_HOURS * 60 * 60 * 1000;
     const deadlineTime = new Date(lockTarget).toISOString();
 
     const getCategoryColor = (cat: string) => {
@@ -125,7 +126,7 @@ export function VotingCard({ poll, match }: VotingCardProps) {
                     ) : (
                         <CountdownTimer targetTime={deadlineTime} compact className="text-primary text-sm font-mono" />
                     )}
-                    <span className="text-xs text-muted-foreground">Voting closes 2h post-match</span>
+                    <span className="text-xs text-muted-foreground">Voting closes {VOTING_WINDOW_HOURS}h post-match</span>
                 </div>
             </div>
 

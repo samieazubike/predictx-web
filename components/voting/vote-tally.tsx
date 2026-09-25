@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, AlertTriangle, ShieldAlert } from "lucide-react";
+import { AUTO_APPROVE_THRESHOLD, ADMIN_REVIEW_THRESHOLD } from "@/lib/constants";
 
 interface VoteTallyProps {
     yesVotes: number;
@@ -36,11 +37,11 @@ export function VoteTally({
     let ConsensusIcon = null;
 
     if (hasVotes) {
-        if (maxMajority >= 85) {
+        if (maxMajority >= AUTO_APPROVE_THRESHOLD * 100) {
             consensusColor = "text-success text-glow-green";
             consensusText = "Strong consensus";
             ConsensusIcon = <CheckCircle2 className="w-4 h-4" />;
-        } else if (maxMajority >= 60) {
+        } else if (maxMajority >= ADMIN_REVIEW_THRESHOLD * 100) {
             consensusColor = "text-gold text-glow-gold";
             consensusText = "Moderate — admin review likely";
             ConsensusIcon = <AlertTriangle className="w-4 h-4" />;

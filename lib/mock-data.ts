@@ -40,6 +40,7 @@ export interface Match {
   venue: string;
   kickoff: string;
   status: MatchStatus;
+  league?: string;
   score?: { home: number; away: number };
 }
 
@@ -109,6 +110,7 @@ export const MATCHES: Match[] = [
     venue: "Stamford Bridge",
     kickoff: addDays(1, 15),
     status: "upcoming",
+    league: "Premier League",
   },
   {
     id: "m2",
@@ -117,6 +119,7 @@ export const MATCHES: Match[] = [
     venue: "Emirates Stadium",
     kickoff: addDays(2, 17),
     status: "upcoming",
+    league: "Premier League",
   },
   {
     id: "m3",
@@ -125,6 +128,7 @@ export const MATCHES: Match[] = [
     venue: "Etihad Stadium",
     kickoff: addDays(3, 12),
     status: "upcoming",
+    league: "Premier League",
   },
   {
     id: "m4",
@@ -133,6 +137,7 @@ export const MATCHES: Match[] = [
     venue: "St. James' Park",
     kickoff: addDays(4, 15),
     status: "upcoming",
+    league: "Premier League",
   },
   {
     id: "m5",
@@ -141,6 +146,7 @@ export const MATCHES: Match[] = [
     venue: "Amex Stadium",
     kickoff: addDays(0, 13),
     status: "live",
+    league: "Premier League",
     score: { home: 1, away: 0 },
   },
   {
@@ -150,6 +156,7 @@ export const MATCHES: Match[] = [
     venue: "Goodison Park",
     kickoff: addDays(-1, 15),
     status: "completed",
+    league: "Premier League",
     score: { home: 2, away: 1 },
   },
 ];
