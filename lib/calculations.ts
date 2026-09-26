@@ -1,3 +1,5 @@
+import { PLATFORM_FEE_PERCENTAGE } from "@/lib/constants";
+
 export interface WinningsCalculation {
 	grossWinnings: number;
 	platformFee: number;
@@ -5,8 +7,6 @@ export interface WinningsCalculation {
 	profit: number;
 	roi: number;
 }
-
-const FEE = 0.05;
 
 export function calculatePotentialWinnings(
 	stakeAmount: number,
@@ -17,7 +17,7 @@ export function calculatePotentialWinnings(
 	const winningSidePool = (side === "yes" ? yesPool : noPool) + stakeAmount;
 	const totalPool = yesPool + noPool + stakeAmount;
 	const gross = (stakeAmount / winningSidePool) * totalPool;
-	const fee = gross * FEE;
+	const fee = gross * PLATFORM_FEE_PERCENTAGE;
 	const net = gross - fee;
 	const profit = net - stakeAmount;
 	const roi = (profit / stakeAmount) * 100;

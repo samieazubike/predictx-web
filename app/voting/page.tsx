@@ -5,8 +5,9 @@ import { Scale, Activity } from "lucide-react";
 import { useVoting } from "@/hooks/use-voting";
 import { useMockData } from "@/hooks/use-mock-data";
 import { useWallet } from "@/hooks/use-wallet";
-import { VotingCard } from "@/components/voting/voting-card";
+import { VotingCard } from "@/components/voting";
 import { GamingButton } from "@/components/shared/gaming-button";
+import { AUTO_APPROVE_THRESHOLD } from "@/lib/constants";
 
 export default function VotingCenterPage() {
   const { isConnected, connect } = useWallet();
@@ -120,7 +121,7 @@ export default function VotingCenterPage() {
           </div>
           <div className="space-y-1">
             <span className="font-bold text-foreground">How Voting Works: </span>
-            Voting opens immediately after a match concludes and remains active for 2 hours. Your oracle vote helps resolve the poll for all participants. If the community reaches exactly &gt;85% consensus, the poll resolves automatically. Otherwise, admin or multi-sig review is required.
+            Voting opens immediately after a match concludes and remains active for 2 hours. Your oracle vote helps resolve the poll for all participants. If the community reaches exactly &gt;{(AUTO_APPROVE_THRESHOLD * 100).toFixed(0)}% consensus, the poll resolves automatically. Otherwise, admin or multi-sig review is required.
           </div>
         </div>
 

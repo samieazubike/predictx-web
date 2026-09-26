@@ -5,6 +5,7 @@ import { persist } from "zustand/middleware";
 import { STORAGE_KEYS, type Poll } from "@/lib/mock-data";
 import { useMockData } from "@/hooks/use-mock-data";
 import { useStaking } from "@/hooks/use-staking";
+import { VOTER_REWARD_MIN } from "@/lib/constants";
 
 export type VoteDecision = "yes" | "no" | "unclear";
 
@@ -42,8 +43,8 @@ export const useVoting = create<VotingState>()(
       getVoteReward: (pollId: string) => {
         const poll = useMockData.getState().getPoll(pollId);
         if (!poll) return 0;
-        // 0.5% of total pool as reward
-        return (poll.yesPool + poll.noPool) * 0.005;
+        // VOTER_REWARD_MIN (0.5%) of total pool as reward
+        return (poll.yesPool + poll.noPool) * VOTER_REWARD_MIN;
       },
 
       castVote: async (pollId: string, decision: VoteDecision) => {
