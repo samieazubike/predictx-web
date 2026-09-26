@@ -5,6 +5,7 @@ import { persist } from "zustand/middleware";
 import { STORAGE_KEYS, type Poll } from "@/lib/mock-data";
 import { useMockData } from "@/hooks/use-mock-data";
 import { useStaking } from "@/hooks/use-staking";
+import { analytics } from "@/lib/analytics";
 
 export type VoteDecision = "yes" | "no" | "unclear";
 
@@ -56,6 +57,7 @@ export const useVoting = create<VotingState>()(
           userVotes: { ...state.userVotes, [pollId]: decision },
           userEarnings: state.userEarnings + reward,
         }));
+        analytics.trackVoteCast(pollId, decision, reward);
       },
 
       getAccuracy: () => {

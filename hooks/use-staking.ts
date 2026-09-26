@@ -9,6 +9,7 @@ import {
 } from "@/lib/calculations";
 import { useMockData } from "@/hooks/use-mock-data";
 import { useWallet, type TransactionReceipt } from "@/hooks/use-wallet";
+import { analytics } from "@/lib/analytics";
 
 interface StakingState {
 	stakes: Stake[];
@@ -73,6 +74,7 @@ export const useStaking = create<StakingState>()(
 				};
 
 				set((s) => ({ stakes: [...s.stakes, stake] }));
+				analytics.trackStakePlaced(pollId, amount, side, matchId);
 				return { stake, receipt };
 			},
 
