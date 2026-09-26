@@ -1,5 +1,7 @@
 "use client";
 
+import { STELLAR_NETWORK, STELLAR_NETWORKS, type StellarNetwork } from "@/lib/constants";
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { requestAccess, isConnected as checkFreighter } from "@stellar/freighter-api";
@@ -27,7 +29,7 @@ export interface TransactionReceipt {
   timestamp: string;
 }
 
-export type StellarNetwork = "testnet" | "mainnet";
+export type { StellarNetwork };
 
 interface WalletState {
   isConnected: boolean;
@@ -47,8 +49,8 @@ interface WalletState {
 }
 
 const HORIZON_URLS: Record<StellarNetwork, string> = {
-  testnet: "https://horizon-testnet.stellar.org",
-  mainnet: "https://horizon.stellar.org",
+  testnet: STELLAR_NETWORKS.testnet.horizonUrl,
+  mainnet: STELLAR_NETWORKS.mainnet.horizonUrl,
 };
 
 /** Fetch native XLM balance from Horizon for the given network */
@@ -75,7 +77,7 @@ export const useWallet = create<WalletState>()(
       isConnecting: false,
       address: "",
       balance: 0,
-      network: "testnet" as StellarNetwork,
+      network: STELLAR_NETWORK,
 
       connect: async () => {
         set({ isConnecting: true });
