@@ -74,7 +74,7 @@ export function UpcomingMatches() {
 
                     {/* Optional Filter Pills (Static mock for now, as requested) */}
                     <motion.div
-                        className="flex flex-wrap gap-2"
+                        className="flex gap-2 overflow-x-auto scrollbar-none pb-1 flex-nowrap"
                         {...(shouldReduceMotion ? {} : {
                             initial: { opacity: 0, x: 20 },
                             whileInView: { opacity: 1, x: 0 },
