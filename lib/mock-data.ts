@@ -66,6 +66,8 @@ export interface Stake {
   side: "yes" | "no";
   amount: number;
   status: "active" | "pending_resolution" | "completed";
+  /** Stellar public key of the wallet that placed this stake. */
+  wallet: string;
   outcome?: "won" | "lost";
   profit?: number;
   roi?: number;
@@ -504,6 +506,10 @@ export const MOCK_USER = {
 export const MOCK_BADGES = ["Early Predictor", "3-Win Streak"];
 
 // ── Default stakes ────────────────────────────────────────────────────────────
+// The seeded wallet address matches MOCK_USER so that first-time users who
+// connect with the demo key see the sample history. New wallets start empty.
+const SEED_WALLET = "GDKXJNLE2YQFPQZ5TK3VZRKPTMJ4OLR3QB7IU6FSCZ6KQF7H4V29F3H";
+
 export const MOCK_STAKES: Stake[] = [
   // Active (3)
   {
@@ -515,6 +521,7 @@ export const MOCK_STAKES: Stake[] = [
     side: "yes",
     amount: 200,
     status: "active",
+    wallet: SEED_WALLET,
   },
   {
     id: "s2",
@@ -525,6 +532,7 @@ export const MOCK_STAKES: Stake[] = [
     side: "no",
     amount: 500,
     status: "active",
+    wallet: SEED_WALLET,
   },
   {
     id: "s3",
@@ -535,6 +543,7 @@ export const MOCK_STAKES: Stake[] = [
     side: "yes",
     amount: 150,
     status: "active",
+    wallet: SEED_WALLET,
   },
   // Pending resolution (2)
   {
@@ -547,6 +556,7 @@ export const MOCK_STAKES: Stake[] = [
     amount: 300,
     status: "pending_resolution",
     resolutionNote: "Voting in progress",
+    wallet: SEED_WALLET,
   },
   {
     id: "s5",
@@ -558,6 +568,7 @@ export const MOCK_STAKES: Stake[] = [
     amount: 180,
     status: "pending_resolution",
     resolutionNote: "Admin review",
+    wallet: SEED_WALLET,
   },
   // Completed — 4 wins, 2 losses
   {
@@ -572,6 +583,7 @@ export const MOCK_STAKES: Stake[] = [
     outcome: "won",
     profit: 50,
     roi: 50.0,
+    wallet: SEED_WALLET,
   },
   {
     id: "s7",
@@ -585,6 +597,7 @@ export const MOCK_STAKES: Stake[] = [
     outcome: "won",
     profit: 120,
     roi: 60.0,
+    wallet: SEED_WALLET,
   },
   {
     id: "s8",
@@ -598,6 +611,7 @@ export const MOCK_STAKES: Stake[] = [
     outcome: "won",
     profit: 187,
     roi: 74.8,
+    wallet: SEED_WALLET,
   },
   {
     id: "s9",
@@ -611,6 +625,7 @@ export const MOCK_STAKES: Stake[] = [
     outcome: "won",
     profit: 350,
     roi: 87.5,
+    wallet: SEED_WALLET,
   },
   {
     id: "s10",
@@ -624,6 +639,7 @@ export const MOCK_STAKES: Stake[] = [
     outcome: "lost",
     profit: -100,
     roi: -100.0,
+    wallet: SEED_WALLET,
   },
   {
     id: "s11",
@@ -637,6 +653,7 @@ export const MOCK_STAKES: Stake[] = [
     outcome: "lost",
     profit: -300,
     roi: -100.0,
+    wallet: SEED_WALLET,
   },
 ];
 
