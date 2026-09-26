@@ -9,6 +9,7 @@ import { WalletConnectModal } from "@/components/wallet-connect-modal"
 import { useWallet } from "@/hooks/use-wallet"
 import { useCountdown } from "@/hooks/use-countdown"
 import type { Poll, Match, PollCategory, LockTime } from "@/lib/mock-data"
+import { getLockTargetISO, isPollLocked } from "@/lib/calculations"
 
 interface PollCardProps {
   poll: Poll
@@ -34,18 +35,6 @@ const CATEGORY_STYLES: Record<PollCategory, { label: string; className: string }
     label: "Other",
     className: "bg-foreground/10 text-foreground border border-border",
   },
-}
-
-function getLockTargetISO(kickoff: string, lockTime: LockTime): string {
-  const kickoffTime = new Date(kickoff).getTime()
-  switch (lockTime) {
-    case "kickoff":
-      return kickoff
-    case "halftime":
-      return new Date(kickoffTime + 52 * 60 * 1000).toISOString()
-    case "60min":
-      return new Date(kickoffTime + 65 * 60 * 1000).toISOString()
-  }
 }
 
 function TeamBadge({ name }: { name: string }) {
@@ -120,6 +109,18 @@ export function PollCard({
   const isHighValue = total > 10_000
   const category = CATEGORY_STYLES[poll.category]
 
+  /**
+   * Lock state, derived from the clock rather than from `poll.status`.
+   *
+   * Nothing in the codebase transitions `poll.status` when a lock time
+   * passes, so a status check alone let an expired poll keep its live CTA.
+   * Ticking every second also means the card flips to Locked the moment the
+   * countdown reaches zero, with no interaction required.
+   */
+  const lockTargetISO = getLockTargetISO(match.kickoff, poll.lockTime)
+  const { isExpired } = useCountdown(lockTargetISO)
+  const locked = isExpired || isPollLocked(poll, match)
+
   // After wallet connects from a pending stake, open the stake modal
   useEffect(() => {
     if (isConnected && pendingStake) {
@@ -131,6 +132,9 @@ export function PollCard({
 
   function handleStakeClick(e: React.MouseEvent) {
     e.stopPropagation()
+    // Belt-and-braces with the button's own `disabled`: a programmatic click
+    // or a keyboard activation racing the countdown must not slip through.
+    if (locked) return
     if (isConnected) {
       setShowStakeModal(true)
     } else {
@@ -248,23 +252,40 @@ export function PollCard({
             {poll.recentActivity}
           </p>
 
-          {/* Stake Now button */}
+          {/* Stake Now button — disabled once the poll has locked */}
           <Button
             onClick={handleStakeClick}
+            disabled={locked}
+            aria-disabled={locked}
             className={[
               "w-full h-10 font-bold uppercase tracking-wider text-sm",
-              "bg-primary hover:bg-primary/90 text-background",
+              "bg-primary hover:bg:bg-primary/90 text-background",
               "glow-cyan hover:shadow-[0_0_25px_rgba(0,217,255,0.5)]",
               "transition-all hover:scale-[1.02]",
+              // The hover treatments above would otherwise still animate on a
+              // disabled button, which reads as "clickable but broken".
+              locked && "opacity-50 cursor-not-allowed hover:bg-primary hover:scale-100 hover:shadow-none",
             ].join(" ")}
           >
-            {isHighValue && <Zap className="mr-1.5 h-4 w-4" />}
-            Stake Now
+            {locked ? (
+              "Locked"
+            ) : (
+              <>
+                {isHighValue && <Zap className="mr-1.5 h-4 w-4" />}
+                Stake Now
+              </>
+            )}
           </Button>
         </div>
       </div>
 
-      <StakeModal poll={poll} open={showStakeModal} onClose={() => setShowStakeModal(false)} />
+      <StakeModal
+        poll={poll}
+        matchId={poll.matchId}
+        matchName={`${match.homeTeam} vs ${match.awayTeam}`}
+        open={showStakeModal}
+        onClose={() => setShowStakeModal(false)}
+      />
       <WalletConnectModal
         open={showWalletModal}
         onClose={() => {
