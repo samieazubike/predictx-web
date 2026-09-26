@@ -12,6 +12,8 @@ import { formatAddress } from "@/lib/calculations";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 
+import { stellar } from "@/lib/stellar";
+
 export interface ConnectPayload {
   address: string;
   balance: number;
@@ -47,26 +49,9 @@ interface WalletState {
   ) => Promise<TransactionReceipt>;
 }
 
-const HORIZON_URLS: Record<StellarNetwork, string> = {
-  testnet: "https://horizon-testnet.stellar.org",
-  mainnet: "https://horizon.stellar.org",
-};
-
-/** Fetch native XLM balance from Horizon for the given network */
+/** Fetch native XLM balance using Stellar client helper */
 async function fetchBalance(publicKey: string, network: StellarNetwork): Promise<number> {
-  try {
-    const response = await fetch(
-      `${HORIZON_URLS[network]}/accounts/${publicKey}`
-    );
-    if (!response.ok) return 0;
-    const data = await response.json();
-    const native = data.balances.find(
-      (b: any) => b.asset_type === "native"
-    )?.balance;
-    return parseFloat(native ?? "0");
-  } catch {
-    return 0;
-  }
+  return stellar.getAccountBalance(publicKey, network);
 }
 
 export const useWallet = create<WalletState>()(
