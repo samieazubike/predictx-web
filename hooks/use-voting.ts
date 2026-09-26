@@ -2,18 +2,65 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { STORAGE_KEYS, type Poll } from "@/lib/mock-data";
+import { STORAGE_KEYS, XLM_RATE, type Poll } from "@/lib/mock-data";
 import { useMockData } from "@/hooks/use-mock-data";
 import { useStaking } from "@/hooks/use-staking";
+import { useWallet } from "@/hooks/use-wallet";
+import { useTransactions } from "@/hooks/use-transactions";
 
 export type VoteDecision = "yes" | "no" | "unclear";
 
+/**
+ * A reward that has been earned (vote cast, non-unclear, poll not yet resolved)
+ * but not yet paid out.
+ */
+interface PendingReward {
+  pollId: string;
+  matchName: string;
+  question: string;
+  /** USD amount owed if vote is later confirmed correct */
+  amount: number;
+  /** The user's vote — "unclear" votes are never eligible */
+  decision: VoteDecision;
+}
+
 interface VotingState {
+  /** pollId → the decision the user cast */
   userVotes: Record<string, VoteDecision>;
+  /** Rewards waiting for poll resolution before payout */
+  pendingRewards: Record<string, PendingReward>;
+  /** Total USD credited to the wallet after settlement — readable by UI */
   userEarnings: number;
+
   availablePolls: () => Poll[];
   getVoteReward: (pollId: string) => number;
+
+  /**
+   * Record the user's vote.
+   * - Stores the decision in userVotes (prevents double-voting).
+   * - For non-unclear votes, queues a PendingReward owed-but-unpaid.
+   * - "unclear" votes are recorded but earn nothing (farmable reward closed).
+   * - Actual wallet credit + ledger entry only happen in settleRewards().
+   */
   castVote: (pollId: string, decision: VoteDecision) => Promise<void>;
+
+  /**
+   * Settle pending rewards for any polls that have now resolved.
+   * Call this whenever poll statuses are refreshed (e.g. on page focus).
+   *
+   * For each pending reward where:
+   *   1. The corresponding poll is now "resolved"
+   *   2. The poll has a known outcome ("yes" | "no")
+   *   3. The user's non-unclear vote matches the outcome (consensus)
+   *
+   * The reward is: credited to the wallet balance, written as a
+   * "vote_reward" ledger entry, and removed from pendingRewards.
+   *
+   * Votes that are "unclear" or that did not match the outcome are
+   * removed from pendingRewards silently (no payout).
+   */
+  settleRewards: () => void;
+
   getAccuracy: () => number;
 }
 
@@ -21,6 +68,7 @@ export const useVoting = create<VotingState>()(
   persist(
     (set, get) => ({
       userVotes: {},
+      pendingRewards: {},
       userEarnings: 0,
 
       availablePolls: () => {
@@ -28,7 +76,6 @@ export const useVoting = create<VotingState>()(
         const { stakes } = useStaking.getState();
         const { userVotes } = get();
 
-        // Staked poll IDs
         const stakedPollIds = new Set(stakes.map((s) => s.pollId));
 
         return polls.filter(
@@ -42,7 +89,7 @@ export const useVoting = create<VotingState>()(
       getVoteReward: (pollId: string) => {
         const poll = useMockData.getState().getPoll(pollId);
         if (!poll) return 0;
-        // 0.5% of total pool as reward
+        // 0.5 % of total pool as reward
         return (poll.yesPool + poll.noPool) * 0.005;
       },
 
@@ -50,19 +97,95 @@ export const useVoting = create<VotingState>()(
         // Simulate network delay for the voting transaction
         await new Promise((resolve) => setTimeout(resolve, 800));
 
-        const reward = get().getVoteReward(pollId);
+        set((state) => {
+          // Already voted — no-op (guard against double-submit races)
+          if (state.userVotes[pollId]) return state;
 
-        set((state) => ({
-          userVotes: { ...state.userVotes, [pollId]: decision },
-          userEarnings: state.userEarnings + reward,
+          const newVotes = { ...state.userVotes, [pollId]: decision };
+          const newPending = { ...state.pendingRewards };
+
+          // "unclear" votes are recorded but earn nothing — reward is 0 and
+          // no pending entry is queued, making it impossible to farm.
+          if (decision !== "unclear") {
+            const poll = useMockData.getState().getPoll(pollId);
+            if (poll) {
+              const reward = (poll.yesPool + poll.noPool) * 0.005;
+              const matchData = useMockData.getState().getMatch(poll.matchId);
+              newPending[pollId] = {
+                pollId,
+                matchName: matchData
+                  ? `${matchData.homeTeam} vs ${matchData.awayTeam}`
+                  : poll.matchId,
+                question: poll.question,
+                amount: reward,
+                decision,
+              };
+            }
+          }
+
+          return { userVotes: newVotes, pendingRewards: newPending };
+        });
+      },
+
+      settleRewards: () => {
+        const { pendingRewards } = get();
+        if (Object.keys(pendingRewards).length === 0) return;
+
+        const polls = useMockData.getState().polls;
+        const pollMap = new Map(polls.map((p) => [p.id, p]));
+
+        const wallet = useWallet.getState();
+        const addTx = useTransactions.getState().addTransaction;
+
+        let earned = 0;
+        const remainingPending = { ...pendingRewards };
+
+        for (const [pollId, pending] of Object.entries(pendingRewards)) {
+          const poll = pollMap.get(pollId);
+          if (!poll) {
+            // Poll no longer exists — discard
+            delete remainingPending[pollId];
+            continue;
+          }
+
+          // Only settle polls that are fully resolved with a definitive outcome
+          if (poll.status !== "resolved" || !poll.outcome) continue;
+
+          // Remove from pending regardless of outcome (no payout if wrong/unclear)
+          delete remainingPending[pollId];
+
+          // Unclear decisions are ineligible (already blocked in castVote, but
+          // guard here for any legacy state that might exist)
+          if (pending.decision === "unclear") continue;
+
+          // Reward is only paid if the user's vote matched the resolved outcome
+          if (pending.decision !== poll.outcome) continue;
+
+          // ✅ Eligible: credit wallet and write ledger entry
+          const amountXLM = pending.amount / XLM_RATE;
+          wallet.updateBalance(amountXLM);
+          earned += pending.amount;
+
+          addTx({
+            type: "vote_reward",
+            amount: pending.amount,
+            amountXLM,
+            description: `Vote reward — "${pending.question}" (${pending.matchName})`,
+            timestamp: new Date().toISOString(),
+            status: "confirmed",
+          });
+        }
+
+        set((s) => ({
+          pendingRewards: remainingPending,
+          userEarnings: s.userEarnings + earned,
         }));
       },
 
       getAccuracy: () => {
-        // Mock accuracy since we don't have historical resolution mapped back to user votes perfectly yet
         const votesCast = Object.keys(get().userVotes).length;
         if (votesCast === 0) return 0;
-        // Mocking a high accuracy for UI demonstration
+        // Mock accuracy — real accuracy would compare userVotes to resolved poll outcomes
         return 89;
       },
     }),
