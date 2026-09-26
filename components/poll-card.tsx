@@ -5,6 +5,7 @@ import { Clock, Users, Info, Lock } from "lucide-react"
 import { GamingButton } from "@/components/shared"
 import { StakeModal } from "@/components/staking"
 import type { Poll } from "@/lib/mock-data"
+import { lockTimeLabel } from "@/lib/mock-data"
 
 interface PollCardProps {
   poll: Poll & { timeLeft?: string }
@@ -57,7 +58,7 @@ export function PollCard({ poll, matchId, matchName = "" }: PollCardProps) {
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-background rounded text-xs font-mono font-bold text-primary whitespace-nowrap">
                   <Clock className="h-4 w-4" />
-                  {poll.timeLeft ?? poll.lockTime}
+                  {poll.timeLeft ?? lockTimeLabel(poll.lockTime)}
                 </div>
               </div>
 
@@ -68,7 +69,7 @@ export function PollCard({ poll, matchId, matchName = "" }: PollCardProps) {
                 </div>
                 <div className="flex items-center gap-1">
                   <Info className="h-4 w-4" />
-                  <span>Locks: {poll.lockTime}</span>
+                  <span>Locks: {lockTimeLabel(poll.lockTime)}</span>
                 </div>
               </div>
 
