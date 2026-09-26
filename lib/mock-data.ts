@@ -24,7 +24,7 @@ export function resetAllData() {
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export type MatchStatus = "upcoming" | "live" | "completed";
-export type PollStatus = "active" | "locked" | "voting" | "resolved";
+export type PollStatus = "active" | "locked" | "voting" | "resolved" | "cancelled";
 export type LockTime = "kickoff" | "halftime" | "60min";
 export type PollCategory =
   | "player_event"
@@ -380,7 +380,7 @@ export const POLLS: Poll[] = [
     recentActivity: "25 people staked No in last hour",
   },
 
-  // m5 — Brighton vs West Ham (live)
+  // m5 — Brighton vs West Ham (live match — polls locked/resolved)
   {
     id: "m5-p1",
     matchId: "m5",
@@ -389,9 +389,10 @@ export const POLLS: Poll[] = [
     yesPool: 8900,
     noPool: 3100,
     participants: 74,
-    status: "locked",
+    status: "resolved",
     lockTime: "kickoff",
-    recentActivity: "61 people staked Yes before kickoff",
+    recentActivity: "Resolved — YES won",
+    outcome: "yes" as const,
   },
   {
     id: "m5-p2",
@@ -401,9 +402,10 @@ export const POLLS: Poll[] = [
     yesPool: 5800,
     noPool: 4200,
     participants: 55,
-    status: "locked",
+    status: "resolved",
     lockTime: "halftime",
-    recentActivity: "Pool reached $10K before halftime",
+    recentActivity: "Resolved — NO won",
+    outcome: "no" as const,
   },
   {
     id: "m5-p3",
@@ -415,7 +417,7 @@ export const POLLS: Poll[] = [
     participants: 47,
     status: "locked",
     lockTime: "60min",
-    recentActivity: "Pool grew $1,800 before 60min",
+    recentActivity: "Poll locked — awaiting resolution",
   },
   {
     id: "m5-p4",
@@ -427,10 +429,23 @@ export const POLLS: Poll[] = [
     participants: 60,
     status: "locked",
     lockTime: "halftime",
-    recentActivity: "43 people staked No before halftime",
+    recentActivity: "Poll locked — awaiting resolution",
+  },
+  // Cancelled example on m5
+  {
+    id: "m5-p5",
+    matchId: "m5",
+    question: "Will the referee be changed at halftime?",
+    category: "other",
+    yesPool: 500,
+    noPool: 300,
+    participants: 12,
+    status: "cancelled",
+    lockTime: "halftime",
+    recentActivity: "Cancelled — emergency refund issued",
   },
 
-  // m6 — Everton vs Wolves (completed)
+  // m6 — Everton vs Wolves (completed match — polls in voting/resolved)
   {
     id: "m6-p1",
     matchId: "m6",
@@ -439,9 +454,10 @@ export const POLLS: Poll[] = [
     yesPool: 7200,
     noPool: 4800,
     participants: 71,
-    status: "voting",
+    status: "resolved",
     lockTime: "kickoff",
-    recentActivity: "Voting in progress — 2 hours remaining",
+    recentActivity: "Resolved — YES won",
+    outcome: "yes" as const,
   },
   {
     id: "m6-p2",
@@ -451,9 +467,10 @@ export const POLLS: Poll[] = [
     yesPool: 5400,
     noPool: 5600,
     participants: 64,
-    status: "voting",
+    status: "resolved",
     lockTime: "halftime",
-    recentActivity: "Voting in progress",
+    recentActivity: "Resolved — YES won",
+    outcome: "yes" as const,
   },
   {
     id: "m6-p3",
@@ -490,6 +507,34 @@ export const POLLS: Poll[] = [
     status: "voting",
     lockTime: "60min",
     recentActivity: "Admin review in progress",
+  },
+
+  // Additional resolved polls (for m4 completed stakes)
+  {
+    id: "m4-p1",
+    matchId: "m4",
+    question: "Will there be a red card?",
+    category: "other",
+    yesPool: 2300,
+    noPool: 9700,
+    participants: 41,
+    status: "resolved",
+    lockTime: "kickoff",
+    recentActivity: "Resolved — NO won",
+    outcome: "no" as const,
+  },
+  {
+    id: "m3-p1",
+    matchId: "m3",
+    question: "Will Haaland receive a yellow card?",
+    category: "player_event",
+    yesPool: 1200,
+    noPool: 8800,
+    participants: 38,
+    status: "resolved",
+    lockTime: "kickoff",
+    recentActivity: "Resolved — NO won",
+    outcome: "no" as const,
   },
 ];
 

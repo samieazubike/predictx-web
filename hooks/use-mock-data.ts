@@ -21,6 +21,11 @@ interface MockDataState {
   getPoll: (pollId: string) => Poll | undefined;
   trendingPolls: () => Poll[];
   updatePollPool: (pollId: string, side: "yes" | "no", amount: number) => void;
+  /** Merge on-chain data fields into a poll (used after contract reads). */
+  updatePollFromChain: (
+    pollId: string,
+    fields: Partial<Pick<Poll, "yesPool" | "noPool" | "participants" | "status" | "outcome">>,
+  ) => void;
   addPoll: (poll: Poll) => void;
 }
 
@@ -59,6 +64,14 @@ export const useMockData = create<MockDataState>()(
 
       /** Prepend a newly-created poll so it appears immediately in all views. */
       addPoll: (poll) => set((s) => ({ polls: [poll, ...s.polls] })),
+
+      /** Merge on-chain data into a poll record (used after Soroban reads). */
+      updatePollFromChain: (pollId, fields) =>
+        set((s) => ({
+          polls: s.polls.map((p) =>
+            p.id !== pollId ? p : { ...p, ...fields },
+          ),
+        })),
     }),
     { name: STORAGE_KEYS.pools },
   ),
