@@ -264,7 +264,13 @@ export function PollCard({
         </div>
       </div>
 
-      <StakeModal poll={poll} open={showStakeModal} onClose={() => setShowStakeModal(false)} />
+      <StakeModal
+        poll={poll}
+        matchName={`${match.homeTeam} vs ${match.awayTeam}`}
+        matchId={poll.matchId}
+        open={showStakeModal}
+        onClose={() => setShowStakeModal(false)}
+      />
       <WalletConnectModal
         open={showWalletModal}
         onClose={() => {
