@@ -29,17 +29,30 @@ export interface TransactionReceipt {
 
 export type StellarNetwork = "testnet" | "mainnet";
 
+/** Discriminated status for balance lookups. */
+export type BalanceStatus = "idle" | "loading" | "ok" | "error";
+
 interface WalletState {
   isConnected: boolean;
   isConnecting: boolean;
   address: string;
+  /** Last successfully fetched XLM balance. Never overwritten with 0 on a failed fetch. */
   balance: number;
+  /** Indicates the result of the most-recent balance lookup. */
+  balanceStatus: BalanceStatus;
+  /**
+   * Human-readable message when balanceStatus === "error".
+   * e.g. "Account not found on mainnet — you may be on the wrong network."
+   */
+  balanceError: string | null;
   network: StellarNetwork;
 
   connect: () => Promise<void>;
   disconnect: () => void;
   updateBalance: (amount: number) => void;
   switchNetwork: (network: StellarNetwork) => void;
+  /** Manually re-fetch the balance for the current address + network. */
+  refreshBalance: () => Promise<void>;
   sendTransaction: (
     amountUSD: number,
     memo: string,
@@ -51,20 +64,57 @@ const HORIZON_URLS: Record<StellarNetwork, string> = {
   mainnet: "https://horizon.stellar.org",
 };
 
-/** Fetch native XLM balance from Horizon for the given network */
-async function fetchBalance(publicKey: string, network: StellarNetwork): Promise<number> {
+/**
+ * Fetch native XLM balance from Horizon.
+ *
+ * Returns:
+ *  - { ok: true, balance } on success
+ *  - { ok: false, status, message } on any HTTP/network error so callers can
+ *    distinguish a 404 (wrong network / unfunded) from a 5xx (server error).
+ */
+async function fetchBalance(
+  publicKey: string,
+  network: StellarNetwork,
+): Promise<
+  | { ok: true; balance: number }
+  | { ok: false; status: number | null; message: string }
+> {
   try {
     const response = await fetch(
-      `${HORIZON_URLS[network]}/accounts/${publicKey}`
+      `${HORIZON_URLS[network]}/accounts/${publicKey}`,
     );
-    if (!response.ok) return 0;
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return {
+          ok: false,
+          status: 404,
+          message:
+            network === "mainnet"
+              ? "Account not found on Mainnet — you may be connected to Testnet."
+              : "Account not found on Testnet — this account may not be funded.",
+        };
+      }
+      return {
+        ok: false,
+        status: response.status,
+        message: `Horizon returned ${response.status}. Try again shortly.`,
+      };
+    }
+
     const data = await response.json();
-    const native = data.balances.find(
-      (b: any) => b.asset_type === "native"
+    const native = data.balances?.find(
+      (b: { asset_type: string; balance?: string }) =>
+        b.asset_type === "native",
     )?.balance;
-    return parseFloat(native ?? "0");
-  } catch {
-    return 0;
+
+    return { ok: true, balance: parseFloat(native ?? "0") };
+  } catch (err) {
+    return {
+      ok: false,
+      status: null,
+      message: "Network error — could not reach Horizon.",
+    };
   }
 }
 
@@ -75,6 +125,8 @@ export const useWallet = create<WalletState>()(
       isConnecting: false,
       address: "",
       balance: 0,
+      balanceStatus: "idle",
+      balanceError: null,
       network: "testnet" as StellarNetwork,
 
       connect: async () => {
@@ -84,33 +136,57 @@ export const useWallet = create<WalletState>()(
           // 1. Check if installed
           const status = await checkFreighter();
           // Freighter v2 returns an object, v1 returned a boolean. This handles both!
-          if (!status || (typeof status === 'object' && !status.isConnected)) {
-            toast.info("Freighter is not installed. Please install the browser extension.");
+          if (
+            !status ||
+            (typeof status === "object" && !status.isConnected)
+          ) {
+            toast.info(
+              "Freighter is not installed. Please install the browser extension.",
+            );
             return;
           }
 
           const accessResponse = await requestAccess();
-          
+
           if ((accessResponse as any).error) {
             throw new Error((accessResponse as any).error);
           }
 
-          const publicKey = typeof accessResponse === "string" 
-            ? accessResponse 
-            : (accessResponse as any).address;
+          const publicKey =
+            typeof accessResponse === "string"
+              ? accessResponse
+              : (accessResponse as any).address;
 
           if (!publicKey) {
             throw new Error("Failed to retrieve public key");
           }
 
-          const currentNetwork = get().network;
-          const balance = await fetchBalance(publicKey, currentNetwork);
+          set({ balanceStatus: "loading", balanceError: null });
 
-          set({
-            isConnected: true,
-            address: publicKey,
-            balance,
-          });
+          const currentNetwork = get().network;
+          const result = await fetchBalance(publicKey, currentNetwork);
+
+          if (result.ok) {
+            set({
+              isConnected: true,
+              address: publicKey,
+              balance: result.balance,
+              balanceStatus: "ok",
+              balanceError: null,
+            });
+          } else {
+            // Connected successfully but balance lookup failed — still mark as
+            // connected; keep balance at 0 (initial) and surface the error.
+            set({
+              isConnected: true,
+              address: publicKey,
+              balanceStatus: "error",
+              balanceError: result.message,
+            });
+            toast.warning("Wallet connected, but balance is unavailable.", {
+              description: result.message,
+            });
+          }
         } catch (error) {
           console.error("Freighter connect error:", error);
           throw error;
@@ -125,23 +201,84 @@ export const useWallet = create<WalletState>()(
           address: "",
           balance: 0,
           isConnecting: false,
+          balanceStatus: "idle",
+          balanceError: null,
         }),
 
       switchNetwork: async (network: StellarNetwork) => {
         const { address, isConnected } = get();
         set({ network });
 
-        // Re-fetch balance from the new network's Horizon
         if (isConnected && address) {
-          const balance = await fetchBalance(address, network);
-          set({ balance });
+          set({ balanceStatus: "loading", balanceError: null });
+
+          const result = await fetchBalance(address, network);
+
+          if (result.ok) {
+            // Only update balance on success — never overwrite with 0 on error.
+            set({
+              balance: result.balance,
+              balanceStatus: "ok",
+              balanceError: null,
+            });
+          } else {
+            // Keep the last-known balance; surface the error instead.
+            set({
+              balanceStatus: "error",
+              balanceError: result.message,
+            });
+            toast.warning("Balance unavailable on this network.", {
+              description: result.message,
+              action:
+                network === "mainnet"
+                  ? {
+                      label: "Switch to Testnet",
+                      onClick: () => get().switchNetwork("testnet"),
+                    }
+                  : undefined,
+            });
+          }
         }
 
         toast.success(`Switched to ${network}`, {
-          description: network === "mainnet"
-            ? "You are now on Stellar Mainnet"
-            : "You are now on Stellar Testnet",
+          description:
+            network === "mainnet"
+              ? "You are now on Stellar Mainnet"
+              : "You are now on Stellar Testnet",
         });
+      },
+
+      refreshBalance: async () => {
+        const { address, isConnected, network } = get();
+        if (!isConnected || !address) return;
+
+        set({ balanceStatus: "loading", balanceError: null });
+
+        const result = await fetchBalance(address, network);
+
+        if (result.ok) {
+          set({
+            balance: result.balance,
+            balanceStatus: "ok",
+            balanceError: null,
+          });
+        } else {
+          // Preserve last-known balance; surface error.
+          set({
+            balanceStatus: "error",
+            balanceError: result.message,
+          });
+          toast.error("Balance lookup failed", {
+            description: result.message,
+            action:
+              network === "mainnet"
+                ? {
+                    label: "Switch to Testnet",
+                    onClick: () => get().switchNetwork("testnet"),
+                  }
+                : undefined,
+          });
+        }
       },
 
       updateBalance: (amount) =>
@@ -208,6 +345,13 @@ export const useWallet = create<WalletState>()(
     }),
     {
       name: "wallet-storage",
-    }
-  )
+      // Don't persist transient status — always start fresh on page load.
+      partialize: (state) => ({
+        isConnected: state.isConnected,
+        address: state.address,
+        balance: state.balance,
+        network: state.network,
+      }),
+    },
+  ),
 );
