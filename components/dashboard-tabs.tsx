@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 import { ActiveStakes } from "./active-stakes"
 import { PendingResolution } from "./pending-resolution"
 import { CompletedPredictions } from "./completed-predictions"
+import { VotingOpportunities } from "./voting-opportunities"
 
 export function DashboardTabs() {
   return (
@@ -22,6 +23,12 @@ export function DashboardTabs() {
           Pending Resolution
         </TabsTrigger>
         <TabsTrigger
+          value="voting"
+          className="data-[state=active]:bg-primary data-[state=active]:text-background font-bold uppercase text-sm tracking-wider px-6 h-full"
+        >
+          Voting Opportunities
+        </TabsTrigger>
+        <TabsTrigger
           value="completed"
           className="data-[state=active]:bg-primary data-[state=active]:text-background font-bold uppercase text-sm tracking-wider px-6 h-full"
         >
@@ -35,6 +42,10 @@ export function DashboardTabs() {
 
       <TabsContent value="pending">
         <PendingResolution />
+      </TabsContent>
+
+      <TabsContent value="voting">
+        <VotingOpportunities />
       </TabsContent>
 
       <TabsContent value="completed">
