@@ -119,13 +119,27 @@ export const useWallet = create<WalletState>()(
         }
       },
 
-      disconnect: () =>
+      disconnect: () => {
+        const { address } = useWallet.getState();
+        // Clear user-scoped state so the next wallet starts with a clean slate.
+        // Import lazily to avoid a circular-dependency at module evaluation time.
+        if (address) {
+          // Dynamic requires are intentional here — these hooks depend on
+          // use-wallet, so we must not import them at the top of the file.
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          const { useStaking } = require("@/hooks/use-staking");
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          const { useVoting } = require("@/hooks/use-voting");
+          useStaking.getState().clearWalletStakes(address);
+          useVoting.getState().clearWalletVotes(address);
+        }
         set({
           isConnected: false,
           address: "",
           balance: 0,
           isConnecting: false,
-        }),
+        });
+      },
 
       switchNetwork: async (network: StellarNetwork) => {
         const { address, isConnected } = get();
