@@ -50,7 +50,12 @@ export interface Poll {
   category: PollCategory;
   yesPool: number;
   noPool: number;
+  /** Number of distinct wallet addresses that have staked on this poll. */
   participants: number;
+  /** Total number of stake transactions placed on this poll (may exceed `participants`). */
+  stakeCount: number;
+  /** Wallet addresses of every distinct staker; used to compute `participants`. */
+  stakers: string[];
   status: PollStatus;
   lockTime: LockTime;
   recentActivity: string;
@@ -168,6 +173,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "34 people staked Yes in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m1-p2",
@@ -180,6 +187,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "halftime",
     recentActivity: "Pool grew $800 in last 2 hours",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m1-p3",
@@ -192,6 +201,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "12 people staked No in last 30min",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m1-p4",
@@ -204,6 +215,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "60min",
     recentActivity: "Pool grew $1,200 in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
 
   // m2 — Arsenal vs Liverpool
@@ -218,6 +231,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "28 people staked Yes in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m2-p2",
@@ -230,6 +245,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "Pool grew $2,000 in 30min",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m2-p3",
@@ -242,6 +259,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "halftime",
     recentActivity: "19 people staked Yes in last 2 hours",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m2-p4",
@@ -254,6 +273,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "Pool grew $600 in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m2-p5",
@@ -266,6 +287,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "60min",
     recentActivity: "41 people staked Yes in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
 
   // m3 — Manchester City vs Tottenham
@@ -280,6 +303,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "Pool grew $400 in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m3-p2",
@@ -292,6 +317,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "52 people staked Yes in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m3-p3",
@@ -304,6 +331,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "Pool grew $1,500 in last 2 hours",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m3-p4",
@@ -316,6 +345,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "halftime",
     recentActivity: "22 people staked Yes in last 30min",
+    stakeCount: 0,
+    stakers: [],
   },
 
   // m4 — Newcastle vs Aston Villa
@@ -330,6 +361,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "Pool grew $300 in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m4-p2",
@@ -342,6 +375,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "17 people staked Yes in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m4-p3",
@@ -354,6 +389,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "halftime",
     recentActivity: "Pool grew $900 in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m4-p4",
@@ -366,6 +403,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "60min",
     recentActivity: "Pool grew $700 in last 2 hours",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m4-p5",
@@ -378,6 +417,8 @@ export const POLLS: Poll[] = [
     status: "active",
     lockTime: "kickoff",
     recentActivity: "25 people staked No in last hour",
+    stakeCount: 0,
+    stakers: [],
   },
 
   // m5 — Brighton vs West Ham (live)
@@ -392,6 +433,8 @@ export const POLLS: Poll[] = [
     status: "locked",
     lockTime: "kickoff",
     recentActivity: "61 people staked Yes before kickoff",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m5-p2",
@@ -404,6 +447,8 @@ export const POLLS: Poll[] = [
     status: "locked",
     lockTime: "halftime",
     recentActivity: "Pool reached $10K before halftime",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m5-p3",
@@ -416,6 +461,8 @@ export const POLLS: Poll[] = [
     status: "locked",
     lockTime: "60min",
     recentActivity: "Pool grew $1,800 before 60min",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m5-p4",
@@ -428,6 +475,8 @@ export const POLLS: Poll[] = [
     status: "locked",
     lockTime: "halftime",
     recentActivity: "43 people staked No before halftime",
+    stakeCount: 0,
+    stakers: [],
   },
 
   // m6 — Everton vs Wolves (completed)
@@ -442,6 +491,8 @@ export const POLLS: Poll[] = [
     status: "voting",
     lockTime: "kickoff",
     recentActivity: "Voting in progress — 2 hours remaining",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m6-p2",
@@ -454,6 +505,8 @@ export const POLLS: Poll[] = [
     status: "voting",
     lockTime: "halftime",
     recentActivity: "Voting in progress",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m6-p3",
@@ -466,6 +519,8 @@ export const POLLS: Poll[] = [
     status: "voting",
     lockTime: "kickoff",
     recentActivity: "Voting in progress — cast your vote now",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m6-p4",
@@ -478,6 +533,8 @@ export const POLLS: Poll[] = [
     status: "voting",
     lockTime: "halftime",
     recentActivity: "Voting in progress",
+    stakeCount: 0,
+    stakers: [],
   },
   {
     id: "m6-p5",
@@ -490,6 +547,8 @@ export const POLLS: Poll[] = [
     status: "voting",
     lockTime: "60min",
     recentActivity: "Admin review in progress",
+    stakeCount: 0,
+    stakers: [],
   },
 ];
 
