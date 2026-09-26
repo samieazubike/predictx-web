@@ -8,7 +8,6 @@ import { Toaster } from "@/components/ui/sonner"
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav"
 import { Header } from "@/components/layout/Header"
 import { PageTransition } from "@/components/layout/page-transition"
-import { ScreenFlashOverlay } from "@/hooks/use-screen-flash"
 
 
 // Display font - bold, all-caps, aggressive
@@ -74,7 +73,6 @@ export default function RootLayout({
         <PageTransition>
           {children}
         </PageTransition>
-        <ScreenFlashOverlay />
         <Toaster theme="dark" position="bottom-right" />
         <Analytics />
         <MobileBottomNav />
