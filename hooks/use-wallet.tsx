@@ -9,6 +9,7 @@ import {
   XLM_USD_RATE,
 } from "@/lib/constants";
 import { formatAddress } from "@/lib/calculations";
+import { STORAGE_KEYS } from "@/lib/mock-data";
 import { toast } from "sonner";
 
 export interface ConnectPayload {
@@ -207,7 +208,7 @@ export const useWallet = create<WalletState>()(
       },
     }),
     {
-      name: "wallet-storage",
+      name: STORAGE_KEYS.wallet,
     }
   )
 );
