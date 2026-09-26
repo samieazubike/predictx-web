@@ -9,6 +9,7 @@ import {
 } from "@/lib/calculations";
 import { useMockData } from "@/hooks/use-mock-data";
 import { useWallet, type TransactionReceipt } from "@/hooks/use-wallet";
+import { trackEvent } from "@/lib/analytics";
 
 interface StakingState {
 	stakes: Stake[];
@@ -73,6 +74,17 @@ export const useStaking = create<StakingState>()(
 				};
 
 				set((s) => ({ stakes: [...s.stakes, stake] }));
+
+				// Analytics — no wallet address or seeds
+				const poll = useMockData.getState().getPoll(pollId);
+				trackEvent({
+					name: "stake_placed",
+					pollCategory: poll?.category ?? "other",
+					matchId,
+					side,
+					amountUSD: amount,
+				});
+
 				return { stake, receipt };
 			},
 
